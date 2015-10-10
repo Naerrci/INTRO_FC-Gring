@@ -1,0 +1,12 @@
+# ignore generated code and all text files
+
+/Debug/
+/Generated_Code/
+/Documentation/
+/.settings/
+# /Static_Code/
+
+*.g_c
+*.g_x
+.cwGeneratedFileSetLog
+ProjectInfo.xml
