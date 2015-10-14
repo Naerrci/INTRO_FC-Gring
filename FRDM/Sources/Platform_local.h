@@ -11,6 +11,7 @@
 /* number of LED's on platform */
 #define PL_CONFIG_NOF_LED  (3)
 #define PL_CONFIG_NOF_KEYS (1)		// 7 Robot Shield
+#define PL_CONFIG_NOF_EINT (0)
 
 /* disable macros, defined or not */
 //#define PL_CONFIG_DISABLE_HAS_LED

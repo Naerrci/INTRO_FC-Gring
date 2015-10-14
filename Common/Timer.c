@@ -10,7 +10,9 @@
 #if PL_CONFIG_HAS_TIMER
 #include "Timer.h"
 #include "Event.h"
+#if PL_CONFIG_HAS_EINT
 #include "EInt1.h"
+#endif /*PL_CONFIG_HAS_EINT*/
 
 void TMR_OnInterrupt(void) {
 	EVNT_SetEvent(EVENT_TIMER);
@@ -24,4 +26,5 @@ void TMR_Deinit(void) {
   /* nothing needed right now */
 }
 
-#endif /*PL_HAS_TIMER*/
+#endif /*PL_CONFIG_HAS_TIMER*/
+

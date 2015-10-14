@@ -10,6 +10,7 @@
 #include "Application.h"
 #include "WAIT1.h"
 #include "Event.h"
+#include "Timer.h"
 
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
@@ -20,9 +21,9 @@ void localEventHandler(EVNT_Handle event){
 
 	if(event == EVENT_TIMER) {
 		counter += 1;
-		if(counter >= 100)
+		if(counter >= TMR_TICK_MS*10)
 			LED1_Neg();
-		counter %= 100;
+		counter %= TMR_TICK_MS*10;
 	}
 
 	if(event == EVENT_BT1_PRESSED) {

@@ -68,17 +68,6 @@ int main(void)
   /* Write your code here */
   /* For example: for(;;) { } */
   APP_Run();	// starts with LED-blinking
-//  for(;;)
-//  {
-//	  LED1_On();
-//  	  WAIT1_Waitms(100);
-//  	  LED1_Off();
-//  	  WAIT1_Waitms(400);
-//  	  LED2_On();
-//  	  WAIT1_Waitms(100);
-//  	  LED2_Off();
-//  	  WAIT1_Waitms(400);
-//  }
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
