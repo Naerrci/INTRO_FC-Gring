@@ -16,7 +16,7 @@
   #include "LED.h"
 #endif
 
-void localEventHandler(EVNT_Handle event){
+void localEventHandler(Event_t event){
 	static int counter = 0;
 
 	if(event == EVENT_TIMER) {

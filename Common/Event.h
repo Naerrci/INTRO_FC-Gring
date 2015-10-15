@@ -22,39 +22,39 @@ typedef enum EVNT_Handle {
   EVENT_TIMER,
   /*!< \todo Your events here */
   EVNT_NOF_EVENTS       /*!< Must be last one! */
-} EVNT_Handle;
+} Event_t;
 
 /*!
  * \brief Sets an event.
  * \param[in] event The handle of the event to set.
  */
-void EVNT_SetEvent(EVNT_Handle event);
+void EVNT_SetEvent(Event_t event);
 
 /*!
  * \brief Clears an event.
  * \param[in] event The event handle of the event to clear.
  */
-void EVNT_ClearEvent(EVNT_Handle event);
+void EVNT_ClearEvent(Event_t event);
 
 /*!
  * \brief Returns the status of an event.
  * \param[in] event The event handler of the event to check.
  * \return TRUE if the event is set, FALSE otherwise.
  */
-bool EVNT_EventIsSet(EVNT_Handle event);
+bool EVNT_EventIsSet(Event_t event);
 
 /*!
  * \brief Returns the status of an event. As a side effect, the event gets cleared.
  * \param[in] event The event handler of the event to check.
  * \return TRUE if the event is set, FALSE otherwise.
  */
-bool EVNT_EventIsSetAutoClear(EVNT_Handle event);
+bool EVNT_EventIsSetAutoClear(Event_t event);
 
 /*!
  * \brief Routine to check if an event is pending. If an event is pending, the event is cleared and the provided callback is called.
  * \param[in] callback Callback routine to be called. The event handle is passed as argument to the callback.
  */
-void EVNT_HandleEvent(void (*callback)(EVNT_Handle));
+void EVNT_HandleEvent(void (*callback)(Event_t));
 
 /*! \brief Event module initialization */
 void EVNT_Init(void);
