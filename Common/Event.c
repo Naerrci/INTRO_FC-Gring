@@ -27,25 +27,25 @@ static EVNT_MemUnit EVNT_Events[((EVNT_NOF_EVENTS-1)/EVNT_MEM_UNIT_NOF_BITS)+1];
 #define GET_EVENT(event) \
   (bool)(EVNT_Events[(event)/EVNT_MEM_UNIT_NOF_BITS]&((1<<(EVNT_MEM_UNIT_NOF_BITS-1))>>((uint8_t)((event)%EVNT_MEM_UNIT_NOF_BITS)))) /*!< Return TRUE if event is set */
 
-void EVNT_SetEvent(EVNT_Handle event) {
+void EVNT_SetEvent(Event_t event) {
 	CS1_CriticalVariable();
 	CS1_EnterCritical();
 	SET_EVENT(event);
 	CS1_ExitCritical();
 }
 
-void EVNT_ClearEvent(EVNT_Handle event) {
+void EVNT_ClearEvent(Event_t event) {
 	CS1_CriticalVariable();
 	CS1_EnterCritical();
 	CLR_EVENT(event);
 	CS1_ExitCritical();
 }
 
-bool EVNT_EventIsSet(EVNT_Handle event) {
+bool EVNT_EventIsSet(Event_t event) {
 	return GET_EVENT(event);
 }
 
-bool EVNT_EventIsSetAutoClear(EVNT_Handle event) {
+bool EVNT_EventIsSetAutoClear(Event_t event) {
   bool res;
 
   res = GET_EVENT(event);
@@ -55,10 +55,10 @@ bool EVNT_EventIsSetAutoClear(EVNT_Handle event) {
   return res;
 }
 
-void EVNT_HandleEvent(void (*callback)(EVNT_Handle)) {
+void EVNT_HandleEvent(void (*callback)(Event_t)) {
   /* Handle the one with the highest priority. Zero is the event with the highest priority. */
-   EVNT_Handle event;
-   for (event=(EVNT_Handle)0; event<EVNT_NOF_EVENTS; event++) { /* does a test on every event */
+   Event_t event;
+   for (event=(Event_t)0; event<EVNT_NOF_EVENTS; event++) { /* does a test on every event */
      if (GET_EVENT(event)) { /* event present? */
        CLR_EVENT(event); /* clear event */
        break; /* get out of loop */
