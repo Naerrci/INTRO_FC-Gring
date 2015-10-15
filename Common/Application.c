@@ -11,6 +11,7 @@
 #include "WAIT1.h"
 #include "Event.h"
 #include "Timer.h"
+#include "CLS1.h"
 
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
@@ -22,6 +23,7 @@ void localEventHandler(Event_t event){
 	if(event == evBt1Pressed) {
 		timerID = schedule_timer(1000,evTimer);
 		LED1_On();
+		CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event == evBt1Released) {
@@ -31,6 +33,7 @@ void localEventHandler(Event_t event){
 
 	if(event == evTimer) {
 		LED2_Neg();
+		CLS1_SendStr("Long pressed!\r\n", CLS1_GetStdio()->stdOut);
 	}
 }
 
@@ -46,6 +49,9 @@ void localEventHandler(Event_t event){
 void APP_Run(void) {
   PL_Init();
   EVNT_Init();
+  TMR_Init();
+
+ // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 
   for(;;) {
 	  EVNT_HandleEvent(localEventHandler);
