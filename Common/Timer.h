@@ -13,7 +13,7 @@
 #include "Event.h"
 
 
-#define TMR_TICK_MS  (TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS)
+#define TMR_TICK_MS  (1000/(TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS))
   /*!< we get called every TMR_TICK_MS ms */
 
 /*! \brief Function called from timer interrupt every TMR_TICK_MS. */
