@@ -21,9 +21,9 @@ void localEventHandler(EVNT_Handle event){
 
 	if(event == EVENT_TIMER) {
 		counter += 1;
-		if(counter >= TMR_TICK_MS*10)
+		if(counter >= 1000/TMR_TICK_MS)
 			LED1_Neg();
-		counter %= TMR_TICK_MS*10;
+		counter %= 1000/TMR_TICK_MS;
 	}
 
 	if(event == EVENT_BT1_PRESSED) {
