@@ -25,8 +25,7 @@ void localEventHandler(Event_t event){
 	}
 
 	if(event == evBt1Released) {
-		if(getTimerInQueue() == 1)
-			unschedule_timer(timerID);
+		unschedule_timer(timerID);
 		LED1_Off();
 	}
 

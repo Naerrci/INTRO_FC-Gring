@@ -56,11 +56,11 @@ unsigned int schedule_timer( uint16 time , Event_t ev ) {
             timerQueue[i].tm = time;
             timerQueue[i].tmEvent = ev;
             timerQueue[i].tmId = ++TID;
+            timerInQueue += 1;
             break;
         }
     }
 
-    timerInQueue += 1;
 
     CS1_ExitCritical();
 
@@ -81,11 +81,10 @@ void unschedule_timer( uint16 id ) {
             timerQueue[i].tmId = IdNull;
             timerQueue[i].tmEvent = nullEvent;
             timerQueue[i].tm = 0;
+            timerInQueue -= 1;
             break;
         }
     }
-
-    timerInQueue -= 1;
 
     CS1_ExitCritical();
 }
