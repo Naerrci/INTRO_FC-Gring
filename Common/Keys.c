@@ -20,7 +20,11 @@
 
 #if PL_CONFIG_HAS_KEYS
 void KEY_Scan(void) {
-  /*! \todo check handling all keys */
+	short mask = 0;
+	mask = (KEY7_Get() << 6 | KEY6_Get() << 5 | KEY5_Get() << 4 | KEY4_Get() << 3 |
+					KEY3_Get() << 2 | KEY2_Get() << 1 | KEY1_Get());
+
+
 }
 
 /*! \brief Key driver initialization */

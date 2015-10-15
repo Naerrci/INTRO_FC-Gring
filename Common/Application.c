@@ -12,10 +12,13 @@
 #include "Event.h"
 #include "Timer.h"
 #include "CLS1.h"
+#include "Keys.h"
 
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
 #endif
+
+
 
 void localEventHandler(Event_t event){
 	static int timerID = 0;
@@ -55,6 +58,12 @@ void APP_Run(void) {
 
   for(;;) {
 	  EVNT_HandleEvent(localEventHandler);
+	  KEY_Scan();
+	  if(KEY1_Get()) {
+	  		LED1_On();
+	  } else {
+		  LED1_Off();
+	  }
   }
   PL_Deinit();
 }
