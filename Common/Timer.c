@@ -14,105 +14,102 @@
 #include "EInt1.h"
 #endif /*PL_CONFIG_HAS_EINT*/
 
+#include "CS1.h"
+
+Timer_t timerQueue[MAXTIMER];
+int timerInQueue = 0;
+
 void TMR_OnInterrupt(void) {
-	EVNT_SetEvent(EVENT_TIMER);
+	tickTimer();
 }
 
 void TMR_Init(void) {
-  /* nothing needed right now */
+	clearTimerQueue();
 }
 
 void TMR_Deinit(void) {
   /* nothing needed right now */
 }
 
-/**
-  * @brief  This function saves the timer in the timerQueue and
-  *         set the corresponding TimerID.
-  *
-  * @param  time    timer duration in mS
-  * @param  ev      event name
-  * @param  inISR   true if program is in ISR, otherwise false
-  *
-  * @return timerID
-  */
-/*unsigned short schedule_timer( uint16 time , event ev, bool inISR )
-{
-    static uint16 TID;
+void clearTimerQueue(void) {
+
+	for( int i = 0 ; i < MAXTIMER ; i++ ) {
+		timerQueue[i].tm = 0;
+		timerQueue[i].tmEvent = evNull;
+		timerQueue[i].tmId = IdNull;
+	}
+}
+
+unsigned int schedule_timer( uint16 time , Event_t ev ) {
+    static uint16 TID = 0;
     int i = 0;
 
-    ENTERCRITICAL( inISR );
+    CS1_CriticalVariable();
+    CS1_EnterCritical();
 
-    if( TID == 65535 ) TID = 0;
-
-    TID += 1;
+    TID %= 65536;
 
     for( i = 0 ; i < MAXTIMER ; i++ )
     {
-        if( timerQueue[i].tmId == idNull )
+        if( timerQueue[i].tmId == IdNull )
         {
             timerQueue[i].tm = time;
             timerQueue[i].tmEvent = ev;
-            timerQueue[i].tmId = TID;
+            timerQueue[i].tmId = ++TID;
             break;
         }
     }
 
-    LEAVECRITICAL( inISR );
+    timerInQueue += 1;
+
+    CS1_ExitCritical();
 
     return TID;
 }
-*/
-/**
-  * @brief  This funcion clears a timer selected by the given timer ID.
-  *
-  * @param  id      Timer ID of the timer which will be cleared
-  * @param  inISR   true if program is in ISR, otherwise false
-  */
-/*void unschedule_timer( uint16 id , bool inISR )
-{
-    int i = 0;
-    event nullEvent = { _smUnknown, _evNull };
 
-    ENTERCRITICAL( inISR );
+void unschedule_timer( uint16 id ) {
+    int i = 0;
+    Event_t nullEvent = evNull;
+
+    CS1_CriticalVariable();
+    CS1_EnterCritical();
 
     for( i = 0 ; i < MAXTIMER ; i++ )
     {
         if( timerQueue[i].tmId == id )
         {
-            timerQueue[i].tmId = idNull;
+            timerQueue[i].tmId = IdNull;
             timerQueue[i].tmEvent = nullEvent;
             timerQueue[i].tm = 0;
             break;
         }
     }
 
-    LEAVECRITICAL( inISR );
-}*/
+    timerInQueue -= 1;
 
-/**
-  * @brief  This function is called every 5mS and checks if a timer is
-  *         elapsed. In this case, the function pushes the corresponding
-  *         event in the eventQueue.
-  */
-/*void tickTimer( )
-{
+    CS1_ExitCritical();
+}
+
+void tickTimer( ) {
     int i = 0;
+
+    if( timerInQueue == 0 )
+    	return;
 
     for( i = 0 ; i < MAXTIMER ; i++ )
     {
-        if( timerQueue[i].tmId != idNull )
+        if( timerQueue[i].tmId != IdNull )
         {
-            timerQueue[i].tm -= 5;
+            timerQueue[i].tm -= TMR_TICK_MS;
 
-            if( timerQueue[i].tm == 0 )
+            if( timerQueue[i].tm <= 0 )
             {
-                pushEvent( timerQueue[i].tmEvent , true );
-                unschedule_timer( timerQueue[i].tmId , true );
+                EVNT_SetEvent( timerQueue[i].tmEvent  );
+                unschedule_timer( timerQueue[i].tmId );
             }
         }
     }
-}*/
+}
 
 #endif /*PL_CONFIG_HAS_TIMER*/
 

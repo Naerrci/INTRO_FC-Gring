@@ -16,12 +16,13 @@
 #if PL_CONFIG_HAS_EVENTS
 
 typedef enum EVNT_Handle {
-  EVNT_STARTUP,            /*!< System startup Event */
-  EVENT_BT1_PRESSED,
-  EVENT_BT1_RELEASED,
-  EVENT_TIMER,
-  /*!< \todo Your events here */
-  EVNT_NOF_EVENTS       /*!< Must be last one! */
+	evNull,
+	EVNT_STARTUP,            /*!< System startup Event */
+	EVENT_BT1_PRESSED,
+	EVENT_BT1_RELEASED,
+	EVENT_TIMER,
+	/*!< \todo Your events here */
+	EVNT_NOF_EVENTS       /*!< Must be last one! */
 } Event_t;
 
 /*!
