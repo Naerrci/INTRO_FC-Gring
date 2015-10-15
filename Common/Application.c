@@ -17,21 +17,21 @@
 #endif
 
 void localEventHandler(Event_t event){
-	static int counter = 0;
+	static int timerID = 0;
 
-	if(event == EVENT_TIMER) {
-		counter += 1;
-		if(counter >= 1000/TMR_TICK_MS)
-			LED1_Neg();
-		counter %= 1000/TMR_TICK_MS;
+	if(event == evBt1Pressed) {
+		timerID = schedule_timer(1000,evTimer);
+		LED1_On();
 	}
 
-	if(event == EVENT_BT1_PRESSED) {
-		LED2_On();
+	if(event == evBt1Released) {
+		if(getTimerInQueue() == 1)
+			unschedule_timer(timerID);
+		LED1_Off();
 	}
 
-	if(event == EVENT_BT1_RELEASED) {
-		LED2_Off();
+	if(event == evTimer) {
+		LED2_Neg();
 	}
 }
 

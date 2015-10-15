@@ -17,10 +17,10 @@
 
 typedef enum EVNT_Handle {
 	evNull,
-	EVNT_STARTUP,            /*!< System startup Event */
-	EVENT_BT1_PRESSED,
-	EVENT_BT1_RELEASED,
-	EVENT_TIMER,
+	evStartUp,            /*!< System startup Event */
+	evBt1Pressed,
+	evBt1Released,
+	evTimer,
 	/*!< \todo Your events here */
 	EVNT_NOF_EVENTS       /*!< Must be last one! */
 } Event_t;

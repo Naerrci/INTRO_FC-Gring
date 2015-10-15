@@ -64,4 +64,6 @@ void tickTimer(void);
 
 void clearTimerQueue(void);
 
+int getTimerInQueue();
+
 #endif /* TIMER_H_ */

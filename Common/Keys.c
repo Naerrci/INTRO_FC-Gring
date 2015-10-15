@@ -38,9 +38,9 @@ void KEY_Deinit(void) {
 #if PL_CONFIG_HAS_EINT
 void KEY_EInt(void) {
 	if(EInt1_GetVal() == 0){
-		EVNT_SetEvent(EVENT_BT1_PRESSED);
+		EVNT_SetEvent(evBt1Pressed);
 	} else {
-		EVNT_SetEvent(EVENT_BT1_RELEASED);
+		EVNT_SetEvent(evBt1Released);
 	}
 }
 #endif

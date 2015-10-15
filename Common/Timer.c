@@ -111,5 +111,9 @@ void tickTimer( ) {
     }
 }
 
+int getTimerInQueue(){
+	return timerInQueue;
+}
+
 #endif /*PL_CONFIG_HAS_TIMER*/
 
