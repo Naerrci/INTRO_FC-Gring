@@ -12,9 +12,19 @@
 #include "TU1.h"
 #include "Event.h"
 
-
+#define MAXEVENT 16
+#define MAXTIMER 16
+#define IdNull 0
 #define TMR_TICK_MS  (1000/(TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS))
   /*!< we get called every TMR_TICK_MS ms */
+
+typedef struct timer
+{
+    int tm;
+    unsigned short tmId;
+    Event_t tmEvent;
+} Timer_t;
+
 
 /*! \brief Function called from timer interrupt every TMR_TICK_MS. */
 void TMR_OnInterrupt(void);
@@ -35,7 +45,7 @@ void TMR_Deinit(void);
   *
   * @return timerID
   */
-unsigned int schedule_timer( uint16 time , Event_t ev, bool inISR );
+unsigned int schedule_timer( uint16 time , Event_t ev );
 
 /**
   * @brief  This funcion clears a timer selected by the given timer ID.
@@ -43,30 +53,17 @@ unsigned int schedule_timer( uint16 time , Event_t ev, bool inISR );
   * @param  id      Timer ID of the timer which will be cleared
   * @param  inISR   true if program is in ISR, otherwise false
   */
-void unschedule_timer( uint16 id , bool inISR );
+void unschedule_timer( uint16 id );
 
 /**
   * @brief  This function is called every 5mS and checks if a timer is
   *         elapsed. In this case, the function pushes the corresponding
   *         event in the eventQueue.
   */
-/*void tickTimer( )
-{
-    int i = 0;
+void tickTimer(void);
 
-    for( i = 0 ; i < MAXTIMER ; i++ )
-    {
-        if( timerQueue[i].tmId != idNull )
-        {
-            timerQueue[i].tm -= 5;
+void clearTimerQueue(void);
 
-            if( timerQueue[i].tm == 0 )
-            {
-                pushEvent( timerQueue[i].tmEvent , true );
-                unschedule_timer( timerQueue[i].tmId , true );
-            }
-        }
-    }
-}*/
+int getTimerInQueue();
 
 #endif /* TIMER_H_ */
