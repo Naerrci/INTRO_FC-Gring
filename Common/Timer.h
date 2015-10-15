@@ -9,7 +9,9 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#define TMR_TICK_MS  100
+#include "TU1.h"
+
+#define TMR_TICK_MS  (TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS)
   /*!< we get called every TMR_TICK_MS ms */
 
 /*! \brief Function called from timer interrupt every TMR_TICK_MS. */
