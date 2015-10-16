@@ -18,23 +18,26 @@
   #include "LED.h"
 #endif
 
+void smFRDM(Event_t event) {
+	return;
+}
 
-
-void localEventHandler(Event_t event){
+void smROBO(Event_t event){
 	static int timerID = 0;
+	Event_t timerEvent = {_smROBO,evTimer};
 
-	if(event == evBt1Pressed) {
-		timerID = schedule_timer(1000,evTimer);
+	if(event.eventName == evBt1Pressed) {
+		timerID = schedule_timer(1000,timerEvent);
 		LED1_On();
 		CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 	}
 
-	if(event == evBt1Released) {
+	if(event.eventName == evBt1Released) {
 		unschedule_timer(timerID);
 		LED1_Off();
 	}
 
-	if(event == evTimer) {
+	if(event.eventName == evTimer) {
 		LED2_Neg();
 		CLS1_SendStr("Long pressed!\r\n", CLS1_GetStdio()->stdOut);
 	}
@@ -54,11 +57,34 @@ void APP_Run(void) {
   EVNT_Init();
   TMR_Init();
 
+  Event_t event;
+
  // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 
   for(;;) {
-	  EVNT_HandleEvent(localEventHandler);
 	  KEY_Scan();
+
+	  if(EVNT_EventsInQueue()) {
+		  event = EVNT_GetEvent();
+		  switch(event.smName) {
+		  	  case _smUnknown:
+		  		  break;
+
+		  	  case _smAll:
+		  		  smROBO(event);
+		  		  smFRDM(event);
+		  		  break;
+
+		  	  case _smROBO:
+		  		  smROBO(event);
+		  		  break;
+
+		  	  case _smFRDM:
+		  		  smFRDM(event);
+		  		  break;
+		  }
+	  }
+
 	  if(KEY1_Get()) {
 	  		LED1_On();
 	  } else {

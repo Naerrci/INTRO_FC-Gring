@@ -15,14 +15,33 @@
 
 #if PL_CONFIG_HAS_EVENTS
 
-typedef enum EVNT_Handle {
-	evNull,
-	evStartUp,            /*!< System startup Event */
-	evBt1Pressed,
-	evBt1Released,
-	evTimer,
-	/*!< \todo Your events here */
-	EVNT_NOF_EVENTS       /*!< Must be last one! */
+#define MAXEVENT 16
+
+typedef struct EVNT_Handle {
+	enum {
+		_smUnknown,
+		_smAll,
+		_smROBO,
+		_smFRDM
+	} smName;
+
+	enum {
+		evNull,
+		evStartUp,      /*!< System startup Event */
+			// Events for Robo
+		#ifdef PL_CONFIG_HAS_EINT
+			evBt1Pressed,
+			evBt1Released,
+			evTimer,
+		#endif
+		// Events for FRDM
+		#ifdef PL_CONFIG_HAS_KEYS
+			evKeyAPressed,
+			evKeyAReleased,
+		#endif
+			/*!< \todo Your events here */
+			EVNT_NOF_EVENTS /*!< Must be last one! */
+	} eventName;
 } Event_t;
 
 /*!
@@ -35,27 +54,9 @@ void EVNT_SetEvent(Event_t event);
  * \brief Clears an event.
  * \param[in] event The event handle of the event to clear.
  */
-void EVNT_ClearEvent(Event_t event);
+Event_t EVNT_GetEvent();
 
-/*!
- * \brief Returns the status of an event.
- * \param[in] event The event handler of the event to check.
- * \return TRUE if the event is set, FALSE otherwise.
- */
-bool EVNT_EventIsSet(Event_t event);
-
-/*!
- * \brief Returns the status of an event. As a side effect, the event gets cleared.
- * \param[in] event The event handler of the event to check.
- * \return TRUE if the event is set, FALSE otherwise.
- */
-bool EVNT_EventIsSetAutoClear(Event_t event);
-
-/*!
- * \brief Routine to check if an event is pending. If an event is pending, the event is cleared and the provided callback is called.
- * \param[in] callback Callback routine to be called. The event handle is passed as argument to the callback.
- */
-void EVNT_HandleEvent(void (*callback)(Event_t));
+short EVNT_EventsInQueue();
 
 /*! \brief Event module initialization */
 void EVNT_Init(void);

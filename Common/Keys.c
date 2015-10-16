@@ -20,11 +20,21 @@
 
 #if PL_CONFIG_HAS_KEYS
 void KEY_Scan(void) {
-	short mask = 0;
-	mask = (KEY7_Get() << 6 | KEY6_Get() << 5 | KEY5_Get() << 4 | KEY4_Get() << 3 |
+	static short oldMask = 0;
+	short mask = (KEY7_Get() << 6 | KEY6_Get() << 5 | KEY5_Get() << 4 | KEY4_Get() << 3 |
 					KEY3_Get() << 2 | KEY2_Get() << 1 | KEY1_Get());
+	if((oldMask ^ mask) == 0 )
+		return;
+	else {
+		switch(oldMask ^ mask) {
+		case 0x01:
+			EVNT_SetEvent((Event_t){_smFRDM,evKeyAPressed});
+			break;
+		}
+	}
 
 
+	oldMask = mask;
 }
 
 /*! \brief Key driver initialization */
@@ -42,9 +52,9 @@ void KEY_Deinit(void) {
 #if PL_CONFIG_HAS_EINT
 void KEY_EInt(void) {
 	if(EInt1_GetVal() == 0){
-		EVNT_SetEvent(evBt1Pressed);
+		EVNT_SetEvent((Event_t){_smROBO,evBt1Pressed});
 	} else {
-		EVNT_SetEvent(evBt1Released);
+		EVNT_SetEvent((Event_t){_smROBO,evBt1Released});
 	}
 }
 #endif

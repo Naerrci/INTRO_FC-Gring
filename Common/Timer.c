@@ -35,7 +35,7 @@ void clearTimerQueue(void) {
 
 	for( int i = 0 ; i < MAXTIMER ; i++ ) {
 		timerQueue[i].tm = 0;
-		timerQueue[i].tmEvent = evNull;
+		timerQueue[i].tmEvent = (Event_t){_smUnknown,evNull};
 		timerQueue[i].tmId = IdNull;
 	}
 }
@@ -69,7 +69,7 @@ unsigned int schedule_timer( uint16 time , Event_t ev ) {
 
 void unschedule_timer( uint16 id ) {
     int i = 0;
-    Event_t nullEvent = evNull;
+    Event_t nullEvent = {_smUnknown,evNull};
 
     CS1_CriticalVariable();
     CS1_EnterCritical();

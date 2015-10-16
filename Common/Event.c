@@ -14,72 +14,65 @@
 #if PL_CONFIG_HAS_EVENTS
 #include "Event.h" /* our own interface */
 
-typedef uint8_t EVNT_MemUnit; /*!< memory unit used to store events flags */
-#define EVNT_MEM_UNIT_NOF_BITS  (sizeof(EVNT_MemUnit)*8)
-  /*!< number of bits in memory unit */
-
-static EVNT_MemUnit EVNT_Events[((EVNT_NOF_EVENTS-1)/EVNT_MEM_UNIT_NOF_BITS)+1]; /*!< Bit set of events */
-
-#define SET_EVENT(event) \
-  EVNT_Events[(event)/EVNT_MEM_UNIT_NOF_BITS] |= (1<<(EVNT_MEM_UNIT_NOF_BITS-1))>>((uint8_t)((event)%EVNT_MEM_UNIT_NOF_BITS)) /*!< Set the event */
-#define CLR_EVENT(event) \
-  EVNT_Events[(event)/EVNT_MEM_UNIT_NOF_BITS] &= ~((1<<(EVNT_MEM_UNIT_NOF_BITS-1))>>((uint8_t)((event)%EVNT_MEM_UNIT_NOF_BITS))) /*!< Clear the event */
-#define GET_EVENT(event) \
-  (bool)(EVNT_Events[(event)/EVNT_MEM_UNIT_NOF_BITS]&((1<<(EVNT_MEM_UNIT_NOF_BITS-1))>>((uint8_t)((event)%EVNT_MEM_UNIT_NOF_BITS)))) /*!< Return TRUE if event is set */
+static Event_t eventQueue[MAXEVENT];
+static short eventsInQueue = 0;
 
 void EVNT_SetEvent(Event_t event) {
+	int i = 0;
+
 	CS1_CriticalVariable();
 	CS1_EnterCritical();
-	SET_EVENT(event);
+
+	for( i = 0 ; i < MAXEVENT ; i++ )
+	{
+		if( eventQueue[i].eventName == evNull )
+		{
+			eventQueue[i] = event;
+			eventsInQueue += 1;
+			break;
+		}
+	}
+
 	CS1_ExitCritical();
 }
 
-void EVNT_ClearEvent(Event_t event) {
+Event_t EVNT_GetEvent() {
+	Event_t ev;
+	int i = 0;
+
 	CS1_CriticalVariable();
 	CS1_EnterCritical();
-	CLR_EVENT(event);
+
+	ev = eventQueue[0];
+
+	for(  i = 0 ; i < ( MAXEVENT - 1 ) && eventQueue[i].eventName != evNull ; i++ )
+	{
+		eventQueue[i] = eventQueue[i + 1];
+	}
+
+	eventQueue[MAXEVENT - 1].eventName = evNull;
+	eventsInQueue -= 1;
+
 	CS1_ExitCritical();
+
+	return ev;
 }
 
-bool EVNT_EventIsSet(Event_t event) {
-	return GET_EVENT(event);
-}
-
-bool EVNT_EventIsSetAutoClear(Event_t event) {
-  bool res;
-
-  res = GET_EVENT(event);
-  if (res) {
-    CLR_EVENT(event); /* automatically clear event */
-  }
-  return res;
-}
-
-void EVNT_HandleEvent(void (*callback)(Event_t)) {
-  /* Handle the one with the highest priority. Zero is the event with the highest priority. */
-   Event_t event;
-   for (event=(Event_t)0; event<EVNT_NOF_EVENTS; event++) { /* does a test on every event */
-     if (GET_EVENT(event)) { /* event present? */
-       CLR_EVENT(event); /* clear event */
-       break; /* get out of loop */
-     }
-   }
-   if (event != EVNT_NOF_EVENTS) {
-     callback(event);
-     /* Note: if the callback sets the event, we will get out of the loop.
-      * We will catch it by the next iteration.
-      */
-   }
+short EVNT_EventsInQueue()
+{
+    return eventsInQueue;
 }
 
 void EVNT_Init(void) {
-  uint8_t i;
+	int i = 0;
+	Event_t nullEvent;
+	nullEvent.eventName = evNull;
+	nullEvent.smName = _smUnknown;
 
-  i = 0;
-  do {
-    EVNT_Events[i] = 0; /* initialize data structure */
-    i++;
-  } while(i<sizeof(EVNT_Events)/sizeof(EVNT_Events[0]));
+    for( i = 0 ; i < MAXEVENT ; i++ )
+    {
+        eventQueue[i] = nullEvent;
+    }
 }
 
 void EVNT_Deinit(void) {

@@ -12,7 +12,6 @@
 #include "TU1.h"
 #include "Event.h"
 
-#define MAXEVENT 16
 #define MAXTIMER 16
 #define IdNull 0
 #define TMR_TICK_MS  (1000/(TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS))
