@@ -13,14 +13,14 @@
 #include "Event.h"
 
 #define MAXTIMER 16
-#define IdNull 0
+#define IdNull -1
 #define TMR_TICK_MS  (1000/(TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS))
   /*!< we get called every TMR_TICK_MS ms */
 
 typedef struct timer
 {
     int tm;
-    unsigned short tmId;
+    int tmId;
     Event_t tmEvent;
 } Timer_t;
 
@@ -52,7 +52,7 @@ unsigned int schedule_timer( uint16 time , Event_t ev );
   * @param  id      Timer ID of the timer which will be cleared
   * @param  inISR   true if program is in ISR, otherwise false
   */
-void unschedule_timer( uint16 id );
+void unschedule_timer( int id );
 
 /**
   * @brief  This function is called every 5mS and checks if a timer is

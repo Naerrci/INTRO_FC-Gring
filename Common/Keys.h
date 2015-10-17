@@ -11,8 +11,25 @@
 #define KEYS_H_
 
 #include "Platform.h"
+#include "Event.h"
 
 #if PL_CONFIG_HAS_KEYS
+
+#define DEBOUNCE_TIME		50
+#define LONG_PRESSED_TIME	500
+#define DOUBLE_CLICK_TIME	200
+
+typedef enum {
+	stNull,
+	stIdle,
+	stKeyPressed,
+	stKeyPressedDeb,
+	stKeyLongPressed,
+	stKeyReleased,
+	stKeyReleasedDeb,
+	stDoubleClick,
+	stClick
+}StateSmKeyA_t;
 
 typedef enum {
 #if PL_CONFIG_NOF_KEYS>=1
@@ -125,6 +142,8 @@ void KEY_Init(void);
 
 /*! \brief Key driver de-initialization */
 void KEY_Deinit(void);
+
+void smKeyA(Event_t event);
 
 #endif /* PL_HAS_KEYS */
 

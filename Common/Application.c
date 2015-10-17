@@ -13,15 +13,40 @@
 #include "Timer.h"
 #include "CLS1.h"
 #include "Keys.h"
+#include "Platform_local.h"
 
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
 #endif
 
 void smFRDM(Event_t event) {
-	return;
+	if(event.eventName == evKeyAPressed) {
+		CLS1_SendStr("Key A Pressed\r\n", CLS1_GetStdio()->stdOut);
+		LED1_On();
+	}
+
+	if(event.eventName == evKeyAReleased) {
+		CLS1_SendStr("Key A Released\r\n", CLS1_GetStdio()->stdOut);
+		LED1_Off();
+	}
+
+	if(event.eventName == evKeyALongPressed) {
+		CLS1_SendStr("Key A Long Press\r\n", CLS1_GetStdio()->stdOut);
+		LED2_Neg();
+	}
+
+	if(event.eventName == evKeyAClick) {
+		CLS1_SendStr("Key A Click\r\n", CLS1_GetStdio()->stdOut);
+		LED3_On();
+	}
+
+	if(event.eventName == evKeyADoubleClick) {
+		CLS1_SendStr("Key A Double Click\r\n", CLS1_GetStdio()->stdOut);
+		LED3_Off();
+	}
 }
 
+#if PL_CONFIG_IS_ROBO
 void smROBO(Event_t event){
 	static int timerID = 0;
 	Event_t timerEvent = {_smROBO,evTimer};
@@ -42,6 +67,7 @@ void smROBO(Event_t event){
 		CLS1_SendStr("Long pressed!\r\n", CLS1_GetStdio()->stdOut);
 	}
 }
+#endif
 
 /*
 ** ===================================================================
@@ -57,7 +83,9 @@ void APP_Run(void) {
   EVNT_Init();
   TMR_Init();
 
-  Event_t event;
+  Event_t event = {_smKeyA,evStart};
+
+  EVNT_SetEvent(event);
 
  // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 
@@ -71,24 +99,30 @@ void APP_Run(void) {
 		  		  break;
 
 		  	  case _smAll:
+				  #if PL_CONFIG_IS_ROBO
 		  		  smROBO(event);
+				  #endif
+				  #if PL_CONFIG_IS_FRDM
 		  		  smFRDM(event);
+				  #endif
 		  		  break;
 
 		  	  case _smROBO:
+				  #if PL_CONFIG_IS_ROBO
 		  		  smROBO(event);
+				  #endif
 		  		  break;
 
 		  	  case _smFRDM:
+				  #if PL_CONFIG_IS_FRDM
 		  		  smFRDM(event);
+				  #endif
+		  		  break;
+
+		  	  case _smKeyA:
+		  		  smKeyA(event);
 		  		  break;
 		  }
-	  }
-
-	  if(KEY1_Get()) {
-	  		LED1_On();
-	  } else {
-		  LED1_Off();
 	  }
   }
   PL_Deinit();

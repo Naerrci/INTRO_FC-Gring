@@ -12,6 +12,7 @@
 #define EVENT_H_
 
 #include "Platform.h"
+#include "Platform_local.h"
 
 #if PL_CONFIG_HAS_EVENTS
 
@@ -21,23 +22,56 @@ typedef struct EVNT_Handle {
 	enum {
 		_smUnknown,
 		_smAll,
+		_smKeyA,
 		_smROBO,
 		_smFRDM
 	} smName;
 
 	enum {
 		evNull,
-		evStartUp,      /*!< System startup Event */
+		evStart,      /*!< System startup Event */
 			// Events for Robo
-		#ifdef PL_CONFIG_HAS_EINT
+		#if PL_CONFIG_IS_ROBO
 			evBt1Pressed,
 			evBt1Released,
 			evTimer,
 		#endif
 		// Events for FRDM
-		#ifdef PL_CONFIG_HAS_KEYS
+		#if PL_CONFIG_IS_FRDM
 			evKeyAPressed,
 			evKeyAReleased,
+			evKeyALongPressed,
+			evKeyADoubleClick,
+			evKeyAClick,
+
+			evKeyBPressed,
+			evKeyBReleased,
+
+			evKeyCPressed,
+			evKeyCReleased,
+
+			evKeyDPressed,
+			evKeyDReleased,
+
+			evKeyEPressed,
+			evKeyEReleased,
+
+			evKeyFPressed,
+			evKeyFReleased,
+
+			evKeyGPressed,
+			evKeyGReleased,
+
+			evTimer,
+
+			evTimerKeyPressedDeb,
+			evTimerKeyReleasedDeb,
+			evTimerKeyReleasedDebReturn,
+			evTimerNoDoubleClick,
+			evTimerDoubleClickDeb,
+			evTimerLongPressed,
+			evReturn,
+
 		#endif
 			/*!< \todo Your events here */
 			EVNT_NOF_EVENTS /*!< Must be last one! */

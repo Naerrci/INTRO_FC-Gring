@@ -41,13 +41,13 @@ void clearTimerQueue(void) {
 }
 
 unsigned int schedule_timer( uint16 time , Event_t ev ) {
-    static uint16 TID = 0;
+    static int TID = 0;
     int i = 0;
 
     CS1_CriticalVariable();
     CS1_EnterCritical();
 
-    TID %= 65536;
+    TID %= 32767;
 
     for( i = 0 ; i < MAXTIMER ; i++ )
     {
@@ -67,7 +67,7 @@ unsigned int schedule_timer( uint16 time , Event_t ev ) {
     return TID;
 }
 
-void unschedule_timer( uint16 id ) {
+void unschedule_timer( int id ) {
     int i = 0;
     Event_t nullEvent = {_smUnknown,evNull};
 
