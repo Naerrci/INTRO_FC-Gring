@@ -67,16 +67,16 @@ void KEY_Scan(void) {
 
 		case KeyEMask:
 			if(mask & KeyEMask)
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyEPressed});
+				EVNT_SetEvent((Event_t){_smKeyE,evKeyPressed});
 			else
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyEReleased});
+				EVNT_SetEvent((Event_t){_smKeyE,evKeyReleased});
 			break;
 
 		case KeyFMask:
 			if(mask & KeyFMask)
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyFPressed});
+				EVNT_SetEvent((Event_t){_smKeyF,evKeyPressed});
 			else
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyFReleased});
+				EVNT_SetEvent((Event_t){_smKeyF,evKeyReleased});
 			break;
 
 		case KeyGMask:
@@ -105,6 +105,8 @@ void smKey(Event_t event) {
 	static SmKey_t smKeyB;
 	static SmKey_t smKeyC;
 	static SmKey_t smKeyD;
+	static SmKey_t smKeyE;
+	static SmKey_t smKeyF;
 	static SmKey_t smKeyG;
 
 	// Init state machines with macro
@@ -113,6 +115,8 @@ void smKey(Event_t event) {
 		smKeyB = smKeyInit(B);
 		smKeyC = smKeyInit(C);
 		smKeyD = smKeyInit(D);
+		smKeyE = smKeyInit(E);
+		smKeyF = smKeyInit(F);
 		smKeyG = smKeyInit(G);
 	}
 
@@ -137,6 +141,16 @@ void smKey(Event_t event) {
 
 	case _smKeyD:
 		pSmKey = &smKeyD;
+		pSmKey->oldState = pSmKey->state;
+		break;
+
+	case _smKeyE:
+		pSmKey = &smKeyE;
+		pSmKey->oldState = pSmKey->state;
+		break;
+
+	case _smKeyF:
+		pSmKey = &smKeyF;
 		pSmKey->oldState = pSmKey->state;
 		break;
 

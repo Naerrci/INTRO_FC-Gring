@@ -27,6 +27,8 @@ typedef struct EVNT_Handle {
 		_smKeyB,
 		_smKeyC,
 		_smKeyD,
+		_smKeyE,
+		_smKeyF,
 		_smKeyG,
 		_smROBO,
 		_smFRDM
@@ -72,9 +74,15 @@ typedef struct EVNT_Handle {
 
 			evKeyEPressed,
 			evKeyEReleased,
+			evKeyELongPressed,
+			evKeyEDoubleClick,
+			evKeyEClick,
 
 			evKeyFPressed,
 			evKeyFReleased,
+			evKeyFLongPressed,
+			evKeyFDoubleClick,
+			evKeyFClick,
 
 			evKeyGPressed,
 			evKeyGReleased,
