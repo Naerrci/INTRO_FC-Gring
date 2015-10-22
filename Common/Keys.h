@@ -29,7 +29,7 @@ typedef enum {
 	stKeyReleasedDeb,
 	stDoubleClick,
 	stClick
-}StateSmKeyA_t;
+}StateSmKey_t;
 
 typedef enum {
 #if PL_CONFIG_NOF_KEYS>=1
@@ -144,6 +144,7 @@ void KEY_Init(void);
 void KEY_Deinit(void);
 
 void smKeyA(Event_t event);
+void smKeyB(Event_t event);
 
 #endif /* PL_HAS_KEYS */
 

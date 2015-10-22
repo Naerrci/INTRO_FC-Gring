@@ -21,28 +21,48 @@
 
 void smFRDM(Event_t event) {
 	if(event.eventName == evKeyAPressed) {
-		CLS1_SendStr("Key A Pressed\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Pressed\r\n", CLS1_GetStdio()->stdOut);
 		LED1_On();
 	}
 
 	if(event.eventName == evKeyAReleased) {
-		CLS1_SendStr("Key A Released\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Released\r\n", CLS1_GetStdio()->stdOut);
 		LED1_Off();
 	}
 
 	if(event.eventName == evKeyALongPressed) {
-		CLS1_SendStr("Key A Long Press\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Long Press\r\n", CLS1_GetStdio()->stdOut);
 		LED2_Neg();
 	}
 
 	if(event.eventName == evKeyAClick) {
-		CLS1_SendStr("Key A Click\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Click\r\n", CLS1_GetStdio()->stdOut);
 		LED3_On();
 	}
 
 	if(event.eventName == evKeyADoubleClick) {
-		CLS1_SendStr("Key A Double Click\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Double Click\r\n", CLS1_GetStdio()->stdOut);
 		LED3_Off();
+	}
+
+	if(event.eventName == evKeyBPressed ) {
+		CLS1_SendStr("B Pressed\r\n", CLS1_GetStdio()->stdOut);
+	}
+
+	if(event.eventName == evKeyBReleased ) {
+		CLS1_SendStr("B Released\r\n", CLS1_GetStdio()->stdOut);
+	}
+
+	if(event.eventName == evKeyBLongPressed ) {
+		CLS1_SendStr("B Long Press\r\n", CLS1_GetStdio()->stdOut);
+	}
+
+	if(event.eventName == evKeyBClick ) {
+		CLS1_SendStr("B Click\r\n", CLS1_GetStdio()->stdOut);
+	}
+
+	if(event.eventName == evKeyBDoubleClick ) {
+		CLS1_SendStr("B Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 }
 
@@ -83,9 +103,10 @@ void APP_Run(void) {
   EVNT_Init();
   TMR_Init();
 
-  Event_t event = {_smKeyA,evStart};
+  Event_t event;
 
-  EVNT_SetEvent(event);
+  EVNT_SetEvent((Event_t){_smKeyA,evStart});
+  EVNT_SetEvent((Event_t){_smKeyB,evStart});
 
  // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 
@@ -121,6 +142,10 @@ void APP_Run(void) {
 
 		  	  case _smKeyA:
 		  		  smKeyA(event);
+		  		  break;
+
+		  	  case _smKeyB:
+		  		  smKeyB(event);
 		  		  break;
 		  }
 	  }

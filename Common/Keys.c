@@ -46,9 +46,9 @@ void KEY_Scan(void) {
 
 		case KeyBMask:
 			if(mask & KeyBMask)
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyBPressed});
+				EVNT_SetEvent((Event_t){_smKeyB,evKeyBPressed});
 			else
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyBReleased});
+				EVNT_SetEvent((Event_t){_smKeyB,evKeyBReleased});
 			break;
 
 		case KeyCMask:
@@ -101,10 +101,9 @@ void KEY_Deinit(void) {
 }
 #endif
 
-
 void smKeyA(Event_t event) {
-	static StateSmKeyA_t state;
-	StateSmKeyA_t oldState = state;
+	static StateSmKey_t state;
+	StateSmKey_t oldState = state;
 
 	static int timerIDKeyPressedDeb = -2;
 	static int timerIDKeyReleasedDeb = -2;
@@ -250,6 +249,167 @@ void smKeyA(Event_t event) {
 
 		case stKeyReleasedDeb:
 			if(event.eventName == evKeyAPressed) {
+				unschedule_timer(timerIDNoDoubleClick);
+			}
+			break;
+
+		case stDoubleClick:
+			break;
+
+		case stClick:
+			break;
+		}
+	}
+}
+
+void smKeyB(Event_t event) {
+	static StateSmKey_t state;
+	StateSmKey_t oldState = state;
+
+	static int timerIDKeyPressedDeb = -2;
+	static int timerIDKeyReleasedDeb = -2;
+	static int timerIDKeyReleasedDebReturn = -2;
+	static int timerIDNoDoubleClick = -2;
+	static int timerIDDoubleClickDeb = -2;
+	static int timerIDLongPressed = -2;
+
+	switch(state) {
+	case stNull:
+		if(event.eventName == evStart) {
+			state = stIdle;
+		}
+		break;
+
+	case stIdle:
+		if(event.eventName == evKeyBPressed) {
+			state = stKeyPressed;
+		}
+		break;
+
+	case stKeyPressed:
+		if(event.eventName == evTimerKeyPressedDeb) {
+			state = stKeyPressedDeb;
+		}
+		if(event.eventName == evTimerDoubleClickDeb) {
+			state = stDoubleClick;
+		}
+		break;
+
+	case stKeyPressedDeb:
+		if(event.eventName == evTimerLongPressed) {
+			state = stKeyLongPressed;
+		}
+		if(event.eventName == evKeyBReleased) {
+			state = stKeyReleased;
+		}
+		break;
+
+	case stKeyLongPressed:
+		if(event.eventName == evKeyBReleased) {
+			state = stKeyReleased;
+		}
+		break;
+
+	case stKeyReleased:
+		if(event.eventName == evTimerKeyReleasedDeb) {
+			state = stKeyReleasedDeb;
+		}
+		if(event.eventName == evTimerKeyReleasedDebReturn) {
+			state = stIdle;
+		}
+		break;
+
+	case stKeyReleasedDeb:
+		if(event.eventName == evKeyBPressed) {
+			state = stKeyPressed;
+		}
+		if(event.eventName == evTimerNoDoubleClick) {
+			state = stClick;
+		}
+		break;
+
+	case stClick:
+		if(event.eventName == evReturn) {
+			state = stIdle;
+		}
+		break;
+
+	case stDoubleClick:
+		if(event.eventName == evKeyBReleased) {
+			state = stKeyReleased;
+		}
+		break;
+	}
+
+	if(oldState != state) {
+		switch(state) {
+		case stIdle:
+			break;
+
+		case stKeyPressed:
+			EVNT_SetEvent((Event_t){_smFRDM,evKeyBPressed});
+			if(oldState == stIdle) {
+				timerIDKeyPressedDeb = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerKeyPressedDeb});
+			}
+			if(oldState == stKeyReleasedDeb) {
+				EVNT_SetEvent((Event_t){_smFRDM,evKeyBDoubleClick});
+				timerIDDoubleClickDeb = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerDoubleClickDeb});
+			}
+			break;
+
+		case stKeyPressedDeb:
+			timerIDLongPressed = schedule_timer(LONG_PRESSED_TIME,(Event_t){_smKeyB,evTimerLongPressed});
+			break;
+
+		case stKeyLongPressed:
+			EVNT_SetEvent((Event_t){_smFRDM,evKeyBLongPressed});
+			break;
+
+		case stKeyReleased:
+			EVNT_SetEvent((Event_t){_smFRDM,evKeyBReleased});
+			if(oldState == stKeyPressedDeb) {
+				timerIDKeyReleasedDeb = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerKeyReleasedDeb});
+			}
+			if(oldState == stKeyLongPressed | oldState == stDoubleClick) {
+				timerIDKeyReleasedDebReturn = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerKeyReleasedDebReturn});
+			}
+			break;
+
+		case stKeyReleasedDeb:
+			timerIDNoDoubleClick = schedule_timer(DOUBLE_CLICK_TIME - 2 * DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerNoDoubleClick});
+			break;
+
+		case stDoubleClick:
+			break;
+
+		case stClick:
+			EVNT_SetEvent((Event_t){_smKeyB,evReturn});
+			EVNT_SetEvent((Event_t){_smFRDM,evKeyBClick});
+			break;
+		}
+
+		switch(oldState) {
+
+		case stIdle:
+			break;
+
+		case stKeyPressed:
+			break;
+
+		case stKeyPressedDeb:
+			if(event.eventName == evKeyBReleased) {
+				unschedule_timer(timerIDLongPressed);
+			}
+			break;
+
+		case stKeyLongPressed:
+			break;
+
+		case stKeyReleased:
+			break;
+
+		case stKeyReleasedDeb:
+			if(event.eventName == evKeyBPressed) {
 				unschedule_timer(timerIDNoDoubleClick);
 			}
 			break;
