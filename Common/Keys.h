@@ -143,7 +143,7 @@ void KEY_Init(void);
 /*! \brief Key driver de-initialization */
 void KEY_Deinit(void);
 
-void smKeyA(Event_t event);
+void smKey(Event_t event);
 void smKeyB(Event_t event);
 
 #endif /* PL_HAS_KEYS */

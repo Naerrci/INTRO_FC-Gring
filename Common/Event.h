@@ -22,10 +22,12 @@ typedef struct EVNT_Handle {
 	enum {
 		_smUnknown,
 		_smAll,
+		_smKey,
 		_smKeyA,
 		_smKeyB,
 		_smKeyC,
 		_smKeyD,
+		_smKeyG,
 		_smROBO,
 		_smFRDM
 	} smName;
@@ -41,6 +43,9 @@ typedef struct EVNT_Handle {
 		#endif
 		// Events for FRDM
 		#if PL_CONFIG_IS_FRDM
+			evKeyPressed,
+			evKeyReleased,
+
 			evKeyAPressed,
 			evKeyAReleased,
 			evKeyALongPressed,
@@ -55,9 +60,15 @@ typedef struct EVNT_Handle {
 
 			evKeyCPressed,
 			evKeyCReleased,
+			evKeyCLongPressed,
+			evKeyCDoubleClick,
+			evKeyCClick,
 
 			evKeyDPressed,
 			evKeyDReleased,
+			evKeyDLongPressed,
+			evKeyDDoubleClick,
+			evKeyDClick,
 
 			evKeyEPressed,
 			evKeyEReleased,
@@ -67,6 +78,9 @@ typedef struct EVNT_Handle {
 
 			evKeyGPressed,
 			evKeyGReleased,
+			evKeyGLongPressed,
+			evKeyGDoubleClick,
+			evKeyGClick,
 
 			evTimer,
 
