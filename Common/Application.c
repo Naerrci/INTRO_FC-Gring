@@ -209,6 +209,7 @@ void APP_Run(void) {
 				  #endif
 		  		  break;
 
+			  #if PL_CONFIG_IS_FRDM
 		  	  case _smKey:
 		  	  case _smKeyA:
 		  	  case _smKeyB:
@@ -217,6 +218,7 @@ void APP_Run(void) {
 		  	  case _smKeyG:
 		  		  smKey(event);
 		  		  break;
+			  #endif
 		  }
 	  }
   }

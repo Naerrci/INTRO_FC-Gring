@@ -19,6 +19,16 @@
 #define LONG_PRESSED_TIME	500
 #define DOUBLE_CLICK_TIME	200
 
+#define smKeyInit(key)	((SmKey_t){stNull,stNull,\
+						(Event_t){_smKey##key,evNull},\
+						(Event_t){_smKey##key,evReturn},\
+						(Event_t){_smFRDM,evKey##key##Pressed},\
+						(Event_t){_smFRDM,evKey##key##Released},\
+						(Event_t){_smFRDM,evKey##key##LongPressed},\
+						(Event_t){_smFRDM,evKey##key##DoubleClick},\
+						(Event_t){_smFRDM,evKey##key##Click},\
+						IdNull,IdNull,IdNull,IdNull,IdNull,IdNull})
+
 typedef enum {
 	stNull,
 	stIdle,
@@ -30,6 +40,24 @@ typedef enum {
 	stDoubleClick,
 	stClick
 }StateSmKey_t;
+
+typedef struct {
+	StateSmKey_t 	state;
+	StateSmKey_t 	oldState;
+	Event_t 		evTimerEvent;
+	Event_t			evReturn;
+	Event_t			evKeyPressed;
+	Event_t			evKeyReleased;
+	Event_t			evKeyLongPressed;
+	Event_t			evKeyDoubleClick;
+	Event_t			evKeyClick;
+	int 			timerIDKeyPressedDeb;
+	int 			timerIDKeyReleasedDeb;
+	int 			timerIDKeyReleasedDebReturn;
+	int 			timerIDNoDoubleClick;
+	int 			timerIDDoubleClickDeb;
+	int 			timerIDLongPressed;
+} SmKey_t;
 
 typedef enum {
 #if PL_CONFIG_NOF_KEYS>=1
@@ -144,7 +172,6 @@ void KEY_Init(void);
 void KEY_Deinit(void);
 
 void smKey(Event_t event);
-void smKeyB(Event_t event);
 
 #endif /* PL_HAS_KEYS */
 

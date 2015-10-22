@@ -99,35 +99,6 @@ void KEY_Init(void) {
 void KEY_Deinit(void) {
   /* nothing needed for now */
 }
-#endif
-
-#define smKeyInit(key)	((SmKey_t){stNull,stNull,\
-						(Event_t){_smKey##key,evNull},\
-						(Event_t){_smKey##key,evReturn},\
-						(Event_t){_smFRDM,evKey##key##Pressed},\
-						(Event_t){_smFRDM,evKey##key##Released},\
-						(Event_t){_smFRDM,evKey##key##LongPressed},\
-						(Event_t){_smFRDM,evKey##key##DoubleClick},\
-						(Event_t){_smFRDM,evKey##key##Click},\
-						IdNull,IdNull,IdNull,IdNull,IdNull,IdNull})
-
-typedef struct {
-	StateSmKey_t 	state;
-	StateSmKey_t 	oldState;
-	Event_t 		evTimerEvent;
-	Event_t			evReturn;
-	Event_t			evKeyPressed;
-	Event_t			evKeyReleased;
-	Event_t			evKeyLongPressed;
-	Event_t			evKeyDoubleClick;
-	Event_t			evKeyClick;
-	int 			timerIDKeyPressedDeb;
-	int 			timerIDKeyReleasedDeb;
-	int 			timerIDKeyReleasedDebReturn;
-	int 			timerIDNoDoubleClick;
-	int 			timerIDDoubleClickDeb;
-	int 			timerIDLongPressed;
-} SmKey_t;
 
 void smKey(Event_t event) {
 	static SmKey_t smKeyA;
@@ -136,6 +107,7 @@ void smKey(Event_t event) {
 	static SmKey_t smKeyD;
 	static SmKey_t smKeyG;
 
+	// Init state machines with macro
 	if(event.eventName == evStart && event.smName == _smKey) {
 		smKeyA = smKeyInit(A);
 		smKeyB = smKeyInit(B);
@@ -146,6 +118,7 @@ void smKey(Event_t event) {
 
 	SmKey_t* pSmKey;
 
+	// Set pointer to correct state machine
 	switch(event.smName) {
 	case _smKeyA:
 		pSmKey = &smKeyA;
@@ -176,6 +149,7 @@ void smKey(Event_t event) {
 		return;
 	}
 
+	// Select next state
 	switch(pSmKey->state) {
 	case stNull:
 		if(event.eventName == evStart) {
@@ -244,6 +218,7 @@ void smKey(Event_t event) {
 		break;
 	}
 
+	// do things when entring state
 	if(pSmKey->oldState != pSmKey->state) {
 		switch(pSmKey->state) {
 		case stIdle:
@@ -297,6 +272,7 @@ void smKey(Event_t event) {
 			break;
 		}
 
+		// do things when leaving state
 		switch(pSmKey->oldState) {
 
 		case stIdle:
@@ -332,167 +308,7 @@ void smKey(Event_t event) {
 	}
 }
 
-void smKeyB(Event_t event) {
-	static StateSmKey_t state;
-	StateSmKey_t oldState = state;
-
-	static int timerIDKeyPressedDeb = -2;
-	static int timerIDKeyReleasedDeb = -2;
-	static int timerIDKeyReleasedDebReturn = -2;
-	static int timerIDNoDoubleClick = -2;
-	static int timerIDDoubleClickDeb = -2;
-	static int timerIDLongPressed = -2;
-
-	switch(state) {
-	case stNull:
-		if(event.eventName == evStart) {
-			state = stIdle;
-		}
-		break;
-
-	case stIdle:
-		if(event.eventName == evKeyBPressed) {
-			state = stKeyPressed;
-		}
-		break;
-
-	case stKeyPressed:
-		if(event.eventName == evTimerKeyPressedDeb) {
-			state = stKeyPressedDeb;
-		}
-		if(event.eventName == evTimerDoubleClickDeb) {
-			state = stDoubleClick;
-		}
-		break;
-
-	case stKeyPressedDeb:
-		if(event.eventName == evTimerLongPressed) {
-			state = stKeyLongPressed;
-		}
-		if(event.eventName == evKeyBReleased) {
-			state = stKeyReleased;
-		}
-		break;
-
-	case stKeyLongPressed:
-		if(event.eventName == evKeyBReleased) {
-			state = stKeyReleased;
-		}
-		break;
-
-	case stKeyReleased:
-		if(event.eventName == evTimerKeyReleasedDeb) {
-			state = stKeyReleasedDeb;
-		}
-		if(event.eventName == evTimerKeyReleasedDebReturn) {
-			state = stIdle;
-		}
-		break;
-
-	case stKeyReleasedDeb:
-		if(event.eventName == evKeyBPressed) {
-			state = stKeyPressed;
-		}
-		if(event.eventName == evTimerNoDoubleClick) {
-			state = stClick;
-		}
-		break;
-
-	case stClick:
-		if(event.eventName == evReturn) {
-			state = stIdle;
-		}
-		break;
-
-	case stDoubleClick:
-		if(event.eventName == evKeyBReleased) {
-			state = stKeyReleased;
-		}
-		break;
-	}
-
-	if(oldState != state) {
-		switch(state) {
-		case stIdle:
-			break;
-
-		case stKeyPressed:
-			EVNT_SetEvent((Event_t){_smFRDM,evKeyBPressed});
-			if(oldState == stIdle) {
-				timerIDKeyPressedDeb = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerKeyPressedDeb});
-			}
-			if(oldState == stKeyReleasedDeb) {
-				EVNT_SetEvent((Event_t){_smFRDM,evKeyBDoubleClick});
-				timerIDDoubleClickDeb = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerDoubleClickDeb});
-			}
-			break;
-
-		case stKeyPressedDeb:
-			timerIDLongPressed = schedule_timer(LONG_PRESSED_TIME,(Event_t){_smKeyB,evTimerLongPressed});
-			break;
-
-		case stKeyLongPressed:
-			EVNT_SetEvent((Event_t){_smFRDM,evKeyBLongPressed});
-			break;
-
-		case stKeyReleased:
-			EVNT_SetEvent((Event_t){_smFRDM,evKeyBReleased});
-			if(oldState == stKeyPressedDeb) {
-				timerIDKeyReleasedDeb = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerKeyReleasedDeb});
-			}
-			if(oldState == stKeyLongPressed | oldState == stDoubleClick) {
-				timerIDKeyReleasedDebReturn = schedule_timer(DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerKeyReleasedDebReturn});
-			}
-			break;
-
-		case stKeyReleasedDeb:
-			timerIDNoDoubleClick = schedule_timer(DOUBLE_CLICK_TIME - 2 * DEBOUNCE_TIME,(Event_t){_smKeyB,evTimerNoDoubleClick});
-			break;
-
-		case stDoubleClick:
-			break;
-
-		case stClick:
-			EVNT_SetEvent((Event_t){_smKeyB,evReturn});
-			EVNT_SetEvent((Event_t){_smFRDM,evKeyBClick});
-			break;
-		}
-
-		switch(oldState) {
-
-		case stIdle:
-			break;
-
-		case stKeyPressed:
-			break;
-
-		case stKeyPressedDeb:
-			if(event.eventName == evKeyBReleased) {
-				unschedule_timer(timerIDLongPressed);
-			}
-			break;
-
-		case stKeyLongPressed:
-			break;
-
-		case stKeyReleased:
-			break;
-
-		case stKeyReleasedDeb:
-			if(event.eventName == evKeyBPressed) {
-				unschedule_timer(timerIDNoDoubleClick);
-			}
-			break;
-
-		case stDoubleClick:
-			break;
-
-		case stClick:
-			break;
-		}
-	}
-}
-
+#endif
 
 #if PL_CONFIG_HAS_EINT
 void KEY_EInt(void) {
