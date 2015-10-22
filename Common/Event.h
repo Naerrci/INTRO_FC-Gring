@@ -22,6 +22,7 @@ typedef struct EVNT_Handle {
 	enum {
 		_smUnknown,
 		_smAll,
+		#if PL_CONFIG_IS_FRDM
 		_smKey,
 		_smKeyA,
 		_smKeyB,
@@ -30,8 +31,14 @@ typedef struct EVNT_Handle {
 		_smKeyE,
 		_smKeyF,
 		_smKeyG,
+		_smFRDM,
+		#endif
+
+		#if PL_CONFIG_IS_ROBO
 		_smROBO,
-		_smFRDM
+		_smEInt,
+		_smBuzzer
+		#endif
 	} smName;
 
 	enum {
@@ -41,6 +48,24 @@ typedef struct EVNT_Handle {
 		#if PL_CONFIG_IS_ROBO
 			evBt1Pressed,
 			evBt1Released,
+			evBt1LongPressed,
+			evBt1DoubleClick,
+			evBt1Click,
+
+			evTimerNoDoubleClick,
+			evTimerLongPressed,
+			evReturn,
+
+			// Buzzer Events
+			evBuzzerHigh,
+			evBuzzerMiddle,
+			evBuzzerLow,
+			evTimerBuzzerHigh,
+			evTimerBuzzerMiddle,
+			evTimerBuzzerLow,
+			evBuzzerStop,
+
+			// shit events
 			evTimer,
 		#endif
 		// Events for FRDM

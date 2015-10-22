@@ -15,10 +15,13 @@
 #include "Keys.h"
 #include "Platform_local.h"
 
+#include "BUZZER1.h"
+
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
 #endif
 
+#if PL_CONFIG_IS_FRDM
 void smFRDM(Event_t event) {
 	// Key A
 	if(event.eventName == evKeyAPressed) {
@@ -172,27 +175,40 @@ void smFRDM(Event_t event) {
 		CLS1_SendStr("G Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 }
+#endif
 
 #if PL_CONFIG_IS_ROBO
 void smROBO(Event_t event){
-	static int timerID = 0;
-	Event_t timerEvent = {_smROBO,evTimer};
+
+	static int timerID;
 
 	if(event.eventName == evBt1Pressed) {
-		timerID = schedule_timer(1000,timerEvent);
-		LED1_On();
-		CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("Bt1 pressed\r\n", CLS1_GetStdio()->stdOut);
+		timerID = schedule_timer(2,(Event_t){_smROBO,evTimer});
 	}
 
 	if(event.eventName == evBt1Released) {
+		CLS1_SendStr("Bt1 released\r\n", CLS1_GetStdio()->stdOut);
 		unschedule_timer(timerID);
-		LED1_Off();
+	}
+
+	if(event.eventName == evBt1Click) {
+		CLS1_SendStr("Bt1 click\r\n", CLS1_GetStdio()->stdOut);
+	}
+
+	if(event.eventName == evBt1DoubleClick) {
+		CLS1_SendStr("Bt1 double click\r\n", CLS1_GetStdio()->stdOut);
+	}
+
+	if(event.eventName == evBt1LongPressed) {
+		CLS1_SendStr("Bt1 long pressed\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evTimer) {
-		LED2_Neg();
-		CLS1_SendStr("Long pressed!\r\n", CLS1_GetStdio()->stdOut);
+		BUZZER1_NegVal();
+		timerID = schedule_timer(2,(Event_t){_smROBO,evTimer});
 	}
+
 }
 #endif
 
@@ -212,6 +228,7 @@ void APP_Run(void) {
 
   Event_t event;
 
+#if PL_CONFIG_IS_FRDM
   EVNT_SetEvent((Event_t){_smKey,evStart});
   EVNT_SetEvent((Event_t){_smKeyA,evStart});
   EVNT_SetEvent((Event_t){_smKeyB,evStart});
@@ -220,11 +237,20 @@ void APP_Run(void) {
   EVNT_SetEvent((Event_t){_smKeyE,evStart});
   EVNT_SetEvent((Event_t){_smKeyF,evStart});
   EVNT_SetEvent((Event_t){_smKeyG,evStart});
+#endif
+
+
+#if PL_CONFIG_IS_ROBO
+  EVNT_SetEvent((Event_t){_smEInt,evStart});
+#endif
 
  // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
 
   for(;;) {
+
+	  #if PL_CONFIG_IS_FRDM
 	  KEY_Scan();
+	  #endif
 
 	  if(EVNT_EventsInQueue()) {
 		  event = EVNT_GetEvent();
@@ -241,19 +267,23 @@ void APP_Run(void) {
 				  #endif
 		  		  break;
 
+			  #if PL_CONFIG_IS_ROBO
 		  	  case _smROBO:
-				  #if PL_CONFIG_IS_ROBO
 		  		  smROBO(event);
-				  #endif
 		  		  break;
 
-		  	  case _smFRDM:
-				  #if PL_CONFIG_IS_FRDM
-		  		  smFRDM(event);
-				  #endif
+		  	  case _smEInt:
+		  		  smEInt(event);
 		  		  break;
+			  #endif
+
+
 
 			  #if PL_CONFIG_IS_FRDM
+		  	  case _smFRDM:
+		  		  smFRDM(event);
+		  		  break;
+
 		  	  case _smKey:
 		  	  case _smKeyA:
 		  	  case _smKeyB:

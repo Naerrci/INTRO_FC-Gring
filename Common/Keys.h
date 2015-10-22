@@ -13,11 +13,12 @@
 #include "Platform.h"
 #include "Event.h"
 
+#define LONG_PRESSED_TIME	500
+#define DOUBLE_CLICK_TIME	200
+
 #if PL_CONFIG_HAS_KEYS
 
 #define DEBOUNCE_TIME		30
-#define LONG_PRESSED_TIME	500
-#define DOUBLE_CLICK_TIME	200
 
 #define smKeyInit(key)	((SmKey_t){stNull,stNull,\
 						(Event_t){_smKey##key,evNull},\
@@ -178,7 +179,19 @@ void smKey(Event_t event);
 /*! \brief Key interrupt */
 #if PL_CONFIG_HAS_EINT
 
+typedef enum {
+	stNull,
+	stIdle,
+	stBt1Pressed,
+	stBt1LongPressed,
+	stBt1Released,
+	stBt1DoubleClick,
+	stBt1Click
+}StateSmEInt_t;
+
 void KEY_EInt(void);
+
+void smEInt(Event_t event);
 
 #endif
 

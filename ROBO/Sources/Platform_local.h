@@ -13,4 +13,7 @@
 #define PL_CONFIG_NOF_KEYS (0)
 #define PL_CONFIG_NOF_EINT (1)
 
+#define PL_CONFIG_IS_FRDM	(0)
+#define PL_CONFIG_IS_ROBO	(1)
+
 #endif /* SOURCES_PLATFORM_LOCAL_H_ */

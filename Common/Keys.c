@@ -16,10 +16,13 @@
 #endif
 #if PL_CONFIG_HAS_EINT
 	#include "EInt1.h"
+  #include "Keys.h"
 #endif
 
 #include "timer.h"
 
+
+#if PL_CONFIG_HAS_KEYS
 #define KeyAMask (0x01 << 0)
 #define KeyBMask (0x01 << 1)
 #define KeyCMask (0x01 << 2)
@@ -28,7 +31,7 @@
 #define KeyFMask (0x01 << 5)
 #define KeyGMask (0x01 << 6)
 
-#if PL_CONFIG_HAS_KEYS
+
 void KEY_Scan(void) {
 	static short oldMask = 0;
 	short mask = (KEY7_Get() << 6 | KEY6_Get() << 5 | KEY5_Get() << 4 | KEY4_Get() << 3 |
@@ -296,7 +299,7 @@ void smKey(Event_t event) {
 			break;
 
 		case stKeyPressedDeb:
-			if(event.eventName == evKeyAReleased) {
+			if(event.eventName == evKeyReleased) {
 				unschedule_timer(pSmKey->timerIDLongPressed);
 			}
 			break;
@@ -308,7 +311,7 @@ void smKey(Event_t event) {
 			break;
 
 		case stKeyReleasedDeb:
-			if(event.eventName == evKeyAPressed) {
+			if(event.eventName == evKeyPressed) {
 				unschedule_timer(pSmKey->timerIDNoDoubleClick);
 			}
 			break;
@@ -325,11 +328,133 @@ void smKey(Event_t event) {
 #endif
 
 #if PL_CONFIG_HAS_EINT
+
+void smEInt(Event_t event){
+
+	static StateSmEInt_t state;
+	StateSmEInt_t oldState = state;
+
+	static int timerIDLongPressed = IdNull;
+	static int timerIDNoDoubleClick = IdNull;
+
+	switch(state){
+
+	case stNull:
+		if(event.eventName == evStart) {
+			state = stIdle;
+		}
+		break;
+
+	case stIdle:
+		if(event.eventName == evBt1Pressed) {
+			state = stBt1Pressed;
+		}
+		break;
+
+	case stBt1Pressed:
+		if(event.eventName == evBt1Released) {
+			state = stBt1Released;
+		}
+		if(event.eventName == evTimerLongPressed) {
+			state = stBt1LongPressed;
+		}
+		break;
+
+	case stBt1Released:
+		if(event.eventName == evTimerNoDoubleClick) {
+			state = stIdle;
+		}
+		if(event.eventName == evBt1Pressed) {
+			state = stBt1DoubleClick;
+		}
+		break;
+
+	case stBt1LongPressed:
+		if(event.eventName == evBt1Released) {
+			state = stIdle;
+		}
+		break;
+
+	case stBt1DoubleClick:
+		if(event.eventName == evBt1Released) {
+			state = stIdle;
+		}
+		break;
+
+	default:
+		state = stIdle;
+		break;
+	}
+
+	if(oldState != state) {
+
+		switch(state) {
+
+			case stNull:
+				break;
+
+			case stIdle:
+				break;
+
+			case stBt1Pressed:
+				EVNT_SetEvent((Event_t){_smROBO, evBt1Pressed});
+				timerIDLongPressed = schedule_timer(LONG_PRESSED_TIME, (Event_t){_smEInt, evTimerLongPressed});
+				break;
+
+			case stBt1Released:
+				EVNT_SetEvent((Event_t){_smROBO, evBt1Released});
+				timerIDNoDoubleClick = schedule_timer(DOUBLE_CLICK_TIME, (Event_t){_smEInt, evTimerNoDoubleClick});
+				break;
+
+			case stBt1LongPressed:
+				EVNT_SetEvent((Event_t){_smROBO, evBt1LongPressed});
+				break;
+
+			case stBt1DoubleClick:
+				EVNT_SetEvent((Event_t){_smROBO, evBt1DoubleClick});
+				break;
+
+			default:
+				state = stIdle;
+				break;
+		}
+
+		switch(oldState) {
+
+			case stBt1Pressed:
+				if(event.eventName == evBt1Released) {
+					unschedule_timer(timerIDLongPressed);
+				}
+				break;
+
+			case stBt1Released:
+				if(event.eventName == evBt1Pressed) {
+					unschedule_timer(timerIDNoDoubleClick);
+				}
+				if(event.eventName == evTimerNoDoubleClick) {
+					EVNT_SetEvent((Event_t){_smROBO, evBt1Click});
+				}
+				break;
+
+			case stBt1LongPressed:
+				EVNT_SetEvent((Event_t){_smROBO, evBt1Released});
+				break;
+
+			case stBt1DoubleClick:
+				EVNT_SetEvent((Event_t){_smROBO, evBt1Released});
+				break;
+
+			default:
+				break;
+		}
+	}
+}
+
 void KEY_EInt(void) {
 	if(EInt1_GetVal() == 0){
-		EVNT_SetEvent((Event_t){_smROBO,evBt1Pressed});
+		EVNT_SetEvent((Event_t){_smEInt,evBt1Pressed});
 	} else {
-		EVNT_SetEvent((Event_t){_smROBO,evBt1Released});
+		EVNT_SetEvent((Event_t){_smEInt,evBt1Released});
 	}
 }
 #endif
