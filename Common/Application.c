@@ -14,8 +14,8 @@
 #include "CLS1.h"
 #include "Keys.h"
 #include "Platform_local.h"
-
 #include "BUZZER1.h"
+#include "Buzzer.h"
 
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
@@ -179,34 +179,27 @@ void smFRDM(Event_t event) {
 
 #if PL_CONFIG_IS_ROBO
 void smROBO(Event_t event){
-
-	static int timerID;
-
 	if(event.eventName == evBt1Pressed) {
 		CLS1_SendStr("Bt1 pressed\r\n", CLS1_GetStdio()->stdOut);
-		timerID = schedule_timer(2,(Event_t){_smROBO,evTimer});
 	}
 
 	if(event.eventName == evBt1Released) {
 		CLS1_SendStr("Bt1 released\r\n", CLS1_GetStdio()->stdOut);
-		unschedule_timer(timerID);
 	}
 
 	if(event.eventName == evBt1Click) {
 		CLS1_SendStr("Bt1 click\r\n", CLS1_GetStdio()->stdOut);
+		startBuzzer(High,1000);
 	}
 
 	if(event.eventName == evBt1DoubleClick) {
 		CLS1_SendStr("Bt1 double click\r\n", CLS1_GetStdio()->stdOut);
+		startBuzzer(Middle,1000);
 	}
 
 	if(event.eventName == evBt1LongPressed) {
 		CLS1_SendStr("Bt1 long pressed\r\n", CLS1_GetStdio()->stdOut);
-	}
-
-	if(event.eventName == evTimer) {
-		BUZZER1_NegVal();
-		timerID = schedule_timer(2,(Event_t){_smROBO,evTimer});
+		startBuzzer(Low,1000);
 	}
 
 }
@@ -242,6 +235,7 @@ void APP_Run(void) {
 
 #if PL_CONFIG_IS_ROBO
   EVNT_SetEvent((Event_t){_smEInt,evStart});
+  EVNT_SetEvent((Event_t){_smBuzzer,evStart});
 #endif
 
  // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
@@ -275,6 +269,9 @@ void APP_Run(void) {
 		  	  case _smEInt:
 		  		  smEInt(event);
 		  		  break;
+
+		  	  case _smBuzzer:
+		  		  smBuzzer(event);
 			  #endif
 
 
