@@ -24,6 +24,9 @@
 
 #define PL_CONFIG_HAS_DEBOUNCE  	0
 
+#define PL_CONFIG_HAS_RTOS		  	1
+
+
 /*
 ** ===================================================================
 **     Method      :  void PL_Init(void)

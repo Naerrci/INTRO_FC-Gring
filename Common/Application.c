@@ -216,85 +216,11 @@ void smROBO(Event_t event){
 */
 void APP_Run(void) {
   PL_Init();
-  EVNT_Init();
-  TMR_Init();
 
-  Event_t event;
-
-#if PL_CONFIG_IS_FRDM
-  EVNT_SetEvent((Event_t){_smKey,evStart});
-  EVNT_SetEvent((Event_t){_smKeyA,evStart});
-  EVNT_SetEvent((Event_t){_smKeyB,evStart});
-  EVNT_SetEvent((Event_t){_smKeyC,evStart});
-  EVNT_SetEvent((Event_t){_smKeyD,evStart});
-  EVNT_SetEvent((Event_t){_smKeyE,evStart});
-  EVNT_SetEvent((Event_t){_smKeyF,evStart});
-  EVNT_SetEvent((Event_t){_smKeyG,evStart});
+#if PL_CONFIG_HAS_RTOS
+  RTOS_Run();
 #endif
 
-
-#if PL_CONFIG_IS_ROBO
-  EVNT_SetEvent((Event_t){_smEInt,evStart});
-  EVNT_SetEvent((Event_t){_smBuzzer,evStart});
-#endif
-
- // CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
-
-  for(;;) {
-
-	  #if PL_CONFIG_IS_FRDM
-	  KEY_Scan();
-	  #endif
-
-	  if(EVNT_EventsInQueue()) {
-		  event = EVNT_GetEvent();
-		  switch(event.smName) {
-		  	  case _smUnknown:
-		  		  break;
-
-		  	  case _smAll:
-				  #if PL_CONFIG_IS_ROBO
-		  		  smROBO(event);
-				  #endif
-				  #if PL_CONFIG_IS_FRDM
-		  		  smFRDM(event);
-				  #endif
-		  		  break;
-
-			  #if PL_CONFIG_IS_ROBO
-		  	  case _smROBO:
-		  		  smROBO(event);
-		  		  break;
-
-		  	  case _smEInt:
-		  		  smEInt(event);
-		  		  break;
-
-		  	  case _smBuzzer:
-		  		  smBuzzer(event);
-			  #endif
-
-
-
-			  #if PL_CONFIG_IS_FRDM
-		  	  case _smFRDM:
-		  		  smFRDM(event);
-		  		  break;
-
-		  	  case _smKey:
-		  	  case _smKeyA:
-		  	  case _smKeyB:
-		  	  case _smKeyC:
-		  	  case _smKeyD:
-		  	  case _smKeyE:
-		  	  case _smKeyF:
-		  	  case _smKeyG:
-		  		  smKey(event);
-		  		  break;
-			  #endif
-		  }
-	  }
-  }
   PL_Deinit();
 }
 

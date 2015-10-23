@@ -23,7 +23,18 @@
 void PL_Init(void) {
 #if PL_CONFIG_HAS_LED
   LED_Init();
-  // all other Inits here
+#endif
+
+#if PL_CONFIG_HAS_EVENTS
+  EVNT_Init();
+#endif
+
+#if PL_CONFIG_HAS_TIMER
+  TMR_Init();
+#endif
+
+#if PL_CONFIG_HAS_RTOS
+  RTOS_Init();
 #endif
 }
 
@@ -40,7 +51,6 @@ void PL_Init(void) {
 void PL_Deinit(void) {
 #if PL_CONFIG_HAS_LED
   LED_Deinit();
-  // all other Deinits here
 #endif
 }
 
