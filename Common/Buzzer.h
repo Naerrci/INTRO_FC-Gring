@@ -1,4 +1,8 @@
 
+
+#ifndef SOURCES_COMMON_BUZZER_H_
+#define SOURCES_COMMON_BUZZER_H_
+
 #include "Event.h"
 
 typedef enum {
@@ -16,3 +20,9 @@ typedef enum {
 void startBuzzer(BuzzerFreq_t freq, int time);
 
 void smBuzzer(Event_t event);
+
+
+
+
+#endif /*SOURCES_COMMON_BUZZER_H_*/
+

@@ -5,15 +5,30 @@
  */
 
 #include "Platform.h"
+#include "Application.h"
+
 #if PL_CONFIG_HAS_RTOS
 #include "RTOS.h"
 #include "FRTOS1.h"
-#include "LED.h"
-#include "Event.h"
-#include "Keys.h"
-#include "Application.h"
-#include "BUZZER1.h"
-#include "EInt1.h"
+
+#if PL_CONFIG_HAS_EVENTS
+  #include "Event.h"
+#endif
+#if PL_CONFIG_HAS_KEYS
+  #include "Keys.h"
+#endif
+#if PL_CONFIG_HAS_BUZZER
+  #include "BUZZER1.h"
+  #include "Buzzer.h"
+#endif
+#if PL_CONFIG_HAS_LED
+  #include "LED.h"
+#endif
+#if PL_CONFIG_HAS_EINT
+  #include "EInt1.h"
+  #include "Keys.h"
+#endif
+
 
 #define TEST_RTOS_TASKS  (1)
 
@@ -23,7 +38,7 @@ static void LED1Task(void* pvParameters) {
 	(void)pvParameters;
 	for(;;) {
 		LED1_Neg();
-		FRTOS1_vTaskDelay(500/portTICK_RATE_MS);
+		FRTOS1_vTaskDelay(1000/portTICK_RATE_MS);
 	}
 }
 
@@ -31,11 +46,12 @@ static void LED2Task(void* pvParameters) {
 	(void)pvParameters;
   for(;;) {
 	  LED2_Neg();
-	  FRTOS1_vTaskDelay(100/portTICK_RATE_MS);
+	  FRTOS1_vTaskDelay(500/portTICK_RATE_MS);
   }
 }
 
 #if PL_CONFIG_IS_ROBO
+// Test buzzer
 static void BuzzerTask(void* pvParameters) {
 	(void)pvParameters;
 	for(;;) {
@@ -48,8 +64,8 @@ static void BuzzerTask(void* pvParameters) {
 		FRTOS1_vTaskDelay(1/portTICK_RATE_MS);
 	}
 }
-#endif	// PL_CONFIG_IS_ROBO
-#endif	// TEST_RTOS_TASKS
+#endif	/* PL_CONFIG_IS_ROBO */
+#endif	/* TEST_RTOS_TASKS */
 
 static void AppTask(void* pvParameters) {
 	(void)pvParameters;
@@ -138,38 +154,21 @@ void RTOS_Run(void) {
 
 void RTOS_Init(void) {
 	/*! \todo Add tasks here */
-	if (FRTOS1_xTaskCreate(AppTask,
-			(signed portCHAR *)"App",
-			configMINIMAL_STACK_SIZE,
-			NULL,
-			tskIDLE_PRIORITY,
-			NULL) != pdPASS) {
+	if (FRTOS1_xTaskCreate(AppTask, (signed portCHAR *)"App", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
 		for(;;){} /* error */
 	}
 #if TEST_RTOS_TASKS
 	if (FRTOS1_xTaskCreate(LED1Task,
-			(signed portCHAR *)"LED1Task",
-			configMINIMAL_STACK_SIZE,
-			NULL,
-			tskIDLE_PRIORITY,
-			NULL) != pdPASS) {
+			(signed portCHAR *)"LED1Task", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
 		for(;;){} /* error */
 	}
 	if (FRTOS1_xTaskCreate(LED2Task,
-			(signed portCHAR *)"LED2Task",
-			configMINIMAL_STACK_SIZE,
-			NULL,
-			tskIDLE_PRIORITY,
-			NULL) != pdPASS) {
+			(signed portCHAR *)"LED2Task", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
 		for(;;){} /* error */
 	}
 #if PL_CONFIG_IS_ROBO
 	if (FRTOS1_xTaskCreate(BuzzerTask,
-			(signed portCHAR *)"Buzzer",
-			configMINIMAL_STACK_SIZE,
-			NULL,
-			tskIDLE_PRIORITY,
-			NULL) != pdPASS) {
+			(signed portCHAR *)"Buzzer", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
 		for(;;){} /* error */
 	}
 #endif	// PL_CONFIG_IS_ROBO

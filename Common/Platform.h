@@ -26,6 +26,8 @@
 
 #define PL_CONFIG_HAS_RTOS		  	1
 
+#define PL_CONFIG_HAS_BUZZER	  	PL_CONFIG_NOF_BUZZ > 0
+
 
 /*
 ** ===================================================================

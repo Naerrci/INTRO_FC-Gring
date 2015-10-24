@@ -5,10 +5,16 @@
  *      Author: Simon
  */
 
+#include "Platform.h"
+
+
+#if PL_CONFIG_HAS_BUZZER
 #include "Buzzer.h"
 #include "BUZZER1.h"
 #include "timer.h"
 #include "Event.h"
+
+
 
 void startBuzzer(BuzzerFreq_t freq, int time) {
 	switch(freq) {
@@ -104,3 +110,5 @@ void smBuzzer(Event_t event) {
 	}
 }
 
+
+#endif /*PL_CONFIG_HAS_BUZZER*/

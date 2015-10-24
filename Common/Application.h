@@ -8,6 +8,7 @@
 #ifndef SOURCES_COMMON_APPLICATION_H_
 #define SOURCES_COMMON_APPLICATION_H_
 
+#include "Event.h"
 
 /*
 ** ===================================================================
@@ -19,6 +20,10 @@
 ** ===================================================================
 */
 void APP_Run(void);
+
+void smFRDM(Event_t event);
+
+void smROBO(Event_t event);
 
 
 

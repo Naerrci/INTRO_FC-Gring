@@ -7,18 +7,29 @@
 
 
 #include "Platform.h"
+#include "Platform_local.h"
 #include "Application.h"
 #include "WAIT1.h"
-#include "Event.h"
-#include "Timer.h"
 #include "CLS1.h"
-#include "Keys.h"
-#include "Platform_local.h"
-#include "BUZZER1.h"
-#include "Buzzer.h"
 
+#if PL_CONFIG_HAS_TIMER
+  #include "Timer.h"
+#endif
+#if PL_CONFIG_HAS_EVENTS
+  #include "Event.h"
+#endif
+#if PL_CONFIG_HAS_KEYS
+  #include "Keys.h"
+#endif
+#if PL_CONFIG_HAS_BUZZER
+  #include "BUZZER1.h"
+  #include "Buzzer.h"
+#endif
 #if PL_CONFIG_HAS_LED
   #include "LED.h"
+#endif
+#if PL_CONFIG_HAS_RTOS
+  #include "RTOS.h"
 #endif
 
 #if PL_CONFIG_IS_FRDM

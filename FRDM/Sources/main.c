@@ -53,6 +53,7 @@
 #include "BitIoLdd9.h"
 #include "SW7.h"
 #include "BitIoLdd10.h"
+#include "FRTOS1.h"
 #include "CS1.h"
 #include "HF1.h"
 #include "TI1.h"
