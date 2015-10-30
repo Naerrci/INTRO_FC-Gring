@@ -13,6 +13,8 @@
 #define PL_CONFIG_NOF_KEYS  (0)
 #define PL_CONFIG_NOF_EINT  (1)
 #define PL_CONFIG_NOF_BUZZ  (1)
+#define PL_CONFIG_NOF_LCD   (0)
+#define PL_CONFIG_NOF_SNAKE (0)
 
 #define PL_CONFIG_IS_FRDM	(0)
 #define PL_CONFIG_IS_ROBO	(1)

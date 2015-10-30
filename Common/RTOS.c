@@ -30,7 +30,7 @@
 #endif
 
 
-#define TEST_RTOS_TASKS  (1)
+#define TEST_RTOS_TASKS  (0)
 
 #if TEST_RTOS_TASKS
 
@@ -96,7 +96,7 @@ static void AppTask(void* pvParameters) {
 		KEY_Scan();
 		#endif
 
-		if(EVNT_EventsInQueue()) {
+		while(EVNT_EventsInQueue()) {
 			event = EVNT_GetEvent();
 			switch(event.smName) {
 				case _smUnknown:
@@ -121,7 +121,7 @@ static void AppTask(void* pvParameters) {
 					break;
 
 				case _smBuzzer:
-//					smBuzzer(event);	// disabled for testing Buzzer Task
+					smBuzzer(event);
 					break;
 					#endif
 
@@ -144,7 +144,7 @@ static void AppTask(void* pvParameters) {
 			}
 		}
 
-    FRTOS1_vTaskDelay(10/portTICK_RATE_MS);
+    FRTOS1_vTaskDelay(1/portTICK_RATE_MS);
   }
 }
 

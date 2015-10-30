@@ -31,38 +31,52 @@
 #if PL_CONFIG_HAS_RTOS
   #include "RTOS.h"
 #endif
+#if PL_CONFIG_HAS_SNAKE
+  #include "Event_Styger.h"
+#endif
 
 #if PL_CONFIG_IS_FRDM
 void smFRDM(Event_t event) {
 	// Key A
 	if(event.eventName == evKeyAPressed) {
-		CLS1_SendStr("A Pressed\r\n", CLS1_GetStdio()->stdOut);
-		LED1_On();
+		//CLS1_SendStr("A Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//LED1_On();
+		#if PL_CONFIG_HAS_SNAKE
+			EVNT_SetEvent_Sty(EVNT_SNAKE_UP);
+		#endif
+
 	}
 
 	if(event.eventName == evKeyAReleased) {
-		CLS1_SendStr("A Released\r\n", CLS1_GetStdio()->stdOut);
-		LED1_Off();
+		//CLS1_SendStr("A Released\r\n", CLS1_GetStdio()->stdOut);
+		//LED1_Off();
 	}
 
 	if(event.eventName == evKeyALongPressed) {
-		CLS1_SendStr("A Long Press\r\n", CLS1_GetStdio()->stdOut);
-		LED2_Neg();
+		//CLS1_SendStr("A Long Press\r\n", CLS1_GetStdio()->stdOut);
+		//LED2_Neg();
 	}
 
 	if(event.eventName == evKeyAClick) {
 		CLS1_SendStr("A Click\r\n", CLS1_GetStdio()->stdOut);
-		LED3_On();
+        #if PL_CONFIG_NOF_LED>=3
+        	LED3_Off();
+        #endif
 	}
 
 	if(event.eventName == evKeyADoubleClick) {
 		CLS1_SendStr("A Double Click\r\n", CLS1_GetStdio()->stdOut);
-		LED3_Off();
+		#if PL_CONFIG_NOF_LED>=3
+			LED3_Off();
+  	  	#endif
 	}
 
 	// Key B
 	if(event.eventName == evKeyBPressed ) {
-		CLS1_SendStr("B Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("B Pressed\r\n", CLS1_GetStdio()->stdOut);
+		#if PL_CONFIG_HAS_SNAKE
+			EVNT_SetEvent_Sty(EVNT_SNAKE_RIGHT);
+		#endif
 	}
 
 	if(event.eventName == evKeyBReleased ) {
@@ -83,7 +97,10 @@ void smFRDM(Event_t event) {
 
 	// Key C
 	if(event.eventName == evKeyCPressed ) {
-		CLS1_SendStr("C Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("C Pressed\r\n", CLS1_GetStdio()->stdOut);
+		#if PL_CONFIG_HAS_SNAKE
+			EVNT_SetEvent_Sty(EVNT_SNAKE_DOWN);
+		#endif
 	}
 
 	if(event.eventName == evKeyCReleased ) {
@@ -104,7 +121,10 @@ void smFRDM(Event_t event) {
 
 	// Key D
 	if(event.eventName == evKeyDPressed ) {
-		CLS1_SendStr("D Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("D Pressed\r\n", CLS1_GetStdio()->stdOut);
+		#if PL_CONFIG_HAS_SNAKE
+			EVNT_SetEvent_Sty(EVNT_SNAKE_LEFT);
+		#endif
 	}
 
 	if(event.eventName == evKeyDReleased ) {
@@ -137,7 +157,10 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyEClick ) {
-		CLS1_SendStr("E Click\r\n", CLS1_GetStdio()->stdOut);
+		#if PL_CONFIG_HAS_SNAKE
+			EVNT_SetEvent_Sty(EVNT_SNAKE_START_PAUSE);
+    	#endif
+
 	}
 
 	if(event.eventName == evKeyEDoubleClick ) {

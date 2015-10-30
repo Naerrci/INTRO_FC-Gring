@@ -9,12 +9,15 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
+#include "FreeRTOS.h"
+//#include "FreeRTOSConfig.h"
+
 #include "TU1.h"
 #include "Event.h"
 
 #define MAXTIMER 16
 #define IdNull -1
-#define TMR_TICK_MS  (1000/(TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS))
+#define TMR_TICK_MS  portTICK_PERIOD_MS	   //(1000/(TU1_CNT_INP_FREQ_U_0 / TU1_OFFSET_0_TICKS))
   /*!< we get called every TMR_TICK_MS ms */
 
 typedef struct timer

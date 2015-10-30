@@ -28,6 +28,9 @@
 
 #define PL_CONFIG_HAS_BUZZER	  	PL_CONFIG_NOF_BUZZ > 0
 
+#define PL_CONFIG_HAS_LCD	  	    PL_CONFIG_NOF_LCD > 0
+#define PL_CONFIG_HAS_SNAKE			PL_CONFIG_NOF_SNAKE > 0
+
 
 /*
 ** ===================================================================

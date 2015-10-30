@@ -18,7 +18,7 @@
 
 #define MAXEVENT 16
 
-typedef struct EVNT_Handle {
+typedef struct Event_ {
 	enum {
 		_smUnknown,
 		_smAll,
@@ -125,9 +125,18 @@ typedef struct EVNT_Handle {
 			evTimerLongPressed,
 			evReturn,
 
+			#if PL_CONFIG_HAS_SNAKE
+			  evSnakeStartPause,
+			  evSnakeUp,
+			  evSnakeDown,
+			  evSnakeLeft,
+			  evSnakeRight,
+			#endif
+
 		#endif
 			/*!< \todo Your events here */
-			EVNT_NOF_EVENTS /*!< Must be last one! */
+			//EVNT_NOF_EVENTS /*!< Must be last one! */
+			  EVNT_LAST
 	} eventName;
 } Event_t;
 
