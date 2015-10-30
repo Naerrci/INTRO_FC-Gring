@@ -9,12 +9,15 @@
 #define SOURCES_PLATFORM_LOCAL_H_
 
 /* number of LED's on platform */
-#define PL_CONFIG_NOF_LED   (2)
-#define PL_CONFIG_NOF_KEYS  (7)		// 7 Robot Shield
-#define PL_CONFIG_NOF_EINT  (0)
-#define PL_CONFIG_NOF_BUZZ  (0)
-#define PL_CONFIG_NOF_LCD   (1)
-#define PL_CONFIG_NOF_SNAKE (1)
+#define PL_CONFIG_NOF_LED       (2)
+#define PL_CONFIG_NOF_KEYS      (7)		// 7 Robot Shield
+#define PL_CONFIG_NOF_EINT      (0)
+#define PL_CONFIG_NOF_BUZZ      (0)
+#define PL_CONFIG_NOF_LCD       (1)
+#define PL_CONFIG_NOF_SNAKE     (1)
+#define PL_CONFIG_NOF_SHELL     (1)
+#define PL_CONFIG_NOF_BLUETOOTH (0)
+#define PL_CONFIG_NOF_USB_CDC   (0)
 
 #define PL_CONFIG_IS_FRDM	(1)
 #define PL_CONFIG_IS_ROBO	(0)

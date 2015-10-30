@@ -31,6 +31,10 @@
 #define PL_CONFIG_HAS_LCD	  	    PL_CONFIG_NOF_LCD > 0
 #define PL_CONFIG_HAS_SNAKE			PL_CONFIG_NOF_SNAKE > 0
 
+#define PL_CONFIG_HAS_SHELL			PL_CONFIG_NOF_SHELL > 0
+#define PL_CONFIG_HAS_BLUETOOTH		PL_CONFIG_NOF_BLUETOOTH > 0
+#define PL_CONFIG_HAS_USB_CDC		PL_CONFIG_NOF_USB_CDC > 0
+
 
 /*
 ** ===================================================================

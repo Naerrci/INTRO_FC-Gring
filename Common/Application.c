@@ -30,9 +30,15 @@
 #endif
 #if PL_CONFIG_HAS_RTOS
   #include "RTOS.h"
+  #include "FRTOS1.h"
+#endif
+#if PL_CONFIG_HAS_LCD
+  #include "PDC1.h"
+  #include "GDisp1.h"
 #endif
 #if PL_CONFIG_HAS_SNAKE
   #include "Event_Styger.h"
+  #include "Snake.h"
 #endif
 
 #if PL_CONFIG_IS_FRDM
@@ -169,23 +175,24 @@ void smFRDM(Event_t event) {
 
 	// Key F
 	if(event.eventName == evKeyFPressed ) {
-		CLS1_SendStr("F Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("F Pressed\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyFReleased ) {
-		CLS1_SendStr("F Released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("F Released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyFLongPressed ) {
-		CLS1_SendStr("F Long Press\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("F Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyFClick ) {
-		CLS1_SendStr("F Click\r\n", CLS1_GetStdio()->stdOut);
+//		FRTOS1_vTaskDelete(SnakeTask);
+		//CLS1_SendStr("F Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyFDoubleClick ) {
-		CLS1_SendStr("F Double Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("F Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	// Key G
@@ -250,7 +257,18 @@ void smROBO(Event_t event){
 */
 void APP_Run(void) {
   PL_Init();
+#if PL_CONFIG_HAS_LCD
+  PDC1_WriteLineStr(1, "Hello World");
+  PDC1_WriteLineStr(2, "from the");
+  PDC1_WriteLineStr(3, "KL25Z Freedom");
+  PDC1_WriteLineStr(4, "Board!");
 
+  GDisp1_Clear();
+  GDisp1_DrawCircle(30, 15, 10, GDisp1_COLOR_BLACK);
+  GDisp1_DrawFilledBox(0, 5, 6, 20, GDisp1_COLOR_BLACK);
+  GDisp1_DrawLine(30, 30, 45, 60, GDisp1_COLOR_BLACK);
+  GDisp1_UpdateFull();
+#endif
 #if PL_CONFIG_HAS_RTOS
   RTOS_Run();
 #endif
