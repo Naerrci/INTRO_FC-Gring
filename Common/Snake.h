@@ -8,6 +8,8 @@
 #ifndef SNAKE_H_
 #define SNAKE_H_
 
+extern xTaskHandle SnakeTaskHandle;
+
 static void SnakeTask(void *pvParameters);
 
 void SNAKE_Init(void);

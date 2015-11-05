@@ -398,6 +398,9 @@ static void intro(void) {
   WAIT1_Waitms(3000);
 }
 
+// Handle for Suspend, Resume this task form other task
+xTaskHandle SnakeTaskHandle;
+
 static void SnakeTask(void *pvParameters) {
   intro();
   resetGame();
@@ -414,7 +417,7 @@ void SNAKE_Init(void) {
         configMINIMAL_STACK_SIZE, /* task stack size */
         (void*)NULL, /* optional task startup argument */
         tskIDLE_PRIORITY,  /* initial priority */
-        (xTaskHandle*)NULL /* optional task handle to create */
+        &SnakeTaskHandle /* optional task handle to create */
       ) != pdPASS) {
     /*lint -e527 */
     for(;;){}; /* error! probably out of memory */

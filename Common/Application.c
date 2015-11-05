@@ -183,6 +183,7 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyFLongPressed ) {
+		FRTOS1_vTaskSuspend(SnakeTaskHandle);
 		//CLS1_SendStr("F Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
@@ -192,6 +193,7 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyFDoubleClick ) {
+		FRTOS1_vTaskResume(SnakeTaskHandle);
 		//CLS1_SendStr("F Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
