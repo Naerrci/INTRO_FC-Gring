@@ -55,7 +55,7 @@ void PL_Init(void) {
   SHELL_Init();
 #endif
 #if PL_CONFIG_HAS_SNAKE
-  SNAKE_Init();
+  //SNAKE_Init();
 #endif
 }
 

@@ -399,7 +399,7 @@ static void intro(void) {
 }
 
 // Handle for Suspend, Resume this task form other task
-xTaskHandle SnakeTaskHandle;
+xTaskHandle SnakeTaskHandle = NULL;
 
 static void SnakeTask(void *pvParameters) {
   intro();

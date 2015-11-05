@@ -39,6 +39,10 @@
 #if PL_CONFIG_HAS_SNAKE
   #include "Event_Styger.h"
   #include "Snake.h"
+  #include "PDC1.h"
+  #include "GDisp1.h"
+  #include "FDisp1.h"
+  #include "GFONT1.h"
 #endif
 
 #if PL_CONFIG_IS_FRDM
@@ -207,7 +211,24 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyGLongPressed ) {
-		CLS1_SendStr("G Long Press\r\n", CLS1_GetStdio()->stdOut);
+		FRTOS1_vTaskDelete(SnakeTaskHandle);
+		FDisp1_PixelDim x, y;
+		FDisp1_PixelDim charHeight, totalHeight;
+		GFONT_Callbacks *font = GFONT1_GetFont();
+
+		GDisp1_Clear();
+		FDisp1_GetFontHeight(font, &charHeight, &totalHeight);
+		x = (GDisp1_GetWidth()-FDisp1_GetStringWidth((unsigned char*)"Bisch am Asch", font, NULL))/2; /* center text */
+		y = totalHeight;
+		FDisp1_WriteString((unsigned char*)"Bisch am Asch", GDisp1_COLOR_BLACK, &x, &y, font);
+		GDisp1_DrawCircle(25, 35, 10, GDisp1_COLOR_BLACK);
+		GDisp1_DrawCircle(60, 35, 10, GDisp1_COLOR_BLACK);
+		GDisp1_DrawLine(42, 30, 42, 40, GDisp1_COLOR_BLACK);
+		GDisp1_DrawLine(25, 35, 25, 35, GDisp1_COLOR_BLACK);
+		GDisp1_DrawLine(60, 35, 60, 35, GDisp1_COLOR_BLACK);
+		GDisp1_UpdateFull();
+		SnakeTaskHandle = NULL;
+		//CLS1_SendStr("G Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyGClick ) {
@@ -215,7 +236,9 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyGDoubleClick ) {
-		CLS1_SendStr("G Double Click\r\n", CLS1_GetStdio()->stdOut);
+		if(SnakeTaskHandle == NULL)
+			SNAKE_Init();
+		//CLS1_SendStr("G Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 }
 #endif
