@@ -25,7 +25,15 @@
 #if PL_CONFIG_HAS_SNAKE
   #include "Snake.h"
 #endif
-
+#if PL_CONFIG_HAS_SHELL_QUEUE
+  #include "ShellQueue.h"
+#endif
+#if PL_HAS_CONFIG_SEMAPHORE
+  #include "Sem.h"
+#endif
+#if PL_CONFIG_HAS_REFLECTANCE
+  #include "Reflectance.h"
+#endif
 
 
 /*
@@ -57,6 +65,16 @@ void PL_Init(void) {
 #if PL_CONFIG_HAS_SNAKE
   //SNAKE_Init();
 #endif
+#if PL_CONFIG_HAS_SHELL_QUEUE
+  SQUEUE_Init();
+#endif
+#if PL_HAS_CONFIG_SEMAPHORE
+  SEM_Init();
+#endif
+#if PL_CONFIG_HAS_REFLECTANCE
+  REF_Init();
+#endif
+
 }
 
 
@@ -81,6 +99,15 @@ void PL_Deinit(void) {
 #endif
 #if PL_CONFIG_HAS_RTOS
   RTOS_Deinit();
+#endif
+#if PL_CONFIG_HAS_REFLECTANCE
+  REF_Deinit();
+#endif
+#if PL_HAS_CONFIG_SEMAPHORE
+  SEM_Deinit();
+#endif
+#if PL_CONFIG_HAS_SHELL_QUEUE
+  SQUEUE_Deinit();
 #endif
 }
 

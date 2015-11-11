@@ -18,6 +18,23 @@
 #if PL_CONFIG_HAS_BLUETOOTH
   #include "BT1.h"
 #endif
+#if PL_CONFIG_HAS_BUZZER
+  #include "Buzzer.h"
+#endif
+#if PL_CONFIG_HAS_SHELL_QUEUE
+  #include "ShellQueue.h"
+#endif
+#if PL_CONFIG_HAS_REFLECTANCE
+  #include "Reflectance.h"
+#endif
+#if PL_CONFIG_HAS_SEGGER_RTT
+  #include "RTT1.h"
+#endif
+#if PL_CONFIG_HAS_MOTOR
+  #include "Motor.h"
+#endif
+
+#define SHELL_COPY_CDC_TO_UART   (1)
 
 /* forward declaration */
 static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOType *io);
@@ -34,13 +51,29 @@ static const CLS1_ParseCommandCallback CmdParserTable[] =
   BT1_ParseCommand,
 #endif
 #endif
+#if PL_CONFIG_HAS_BUZZER
+  //BUZ_ParseCommand,
+#endif
+#if PL_CONFIG_HAS_REFLECTANCE
+  #if REF_PARSE_COMMAND_ENABLED
+  REF_ParseCommand,
+  #endif
+#endif
+#if PL_CONFIG_HAS_MOTOR
+  MOT_ParseCommand,
+#endif
   NULL /* Sentinel */
 };
 
 static uint32_t SHELL_val; /* used as demo value for shell */
 
 void SHELL_SendString(unsigned char *msg) {
+#if PL_CONFIG_HAS_SHELL_QUEUE
+  /*! \todo Implement function using queues */
+  SQUEUE_SendString(msg);
+#else
   CLS1_SendStr(msg, CLS1_GetStdio()->stdOut);
+#endif
 }
 
 /*!
@@ -126,7 +159,31 @@ static CLS1_ConstStdIOType CDC_stdio = {
 };
 #endif
 
-static portTASK_FUNCTION(ShellTask, pvParameters) {
+#if SHELL_COPY_CDC_TO_UART
+static void CopyCDCtoUARTStdIOSendChar(uint8_t ch) {
+  while (CDC1_SendChar((uint8_t)ch)==ERR_TXFULL){} /* Send char */
+  CLS1_SendChar((uint8_t)ch); /* Send char */
+}
+
+static CLS1_ConstStdIOType CopyCDCtoUARTStdio = {
+  (CLS1_StdIO_In_FctType)CDC_StdIOReadChar, /* stdin */
+  (CLS1_StdIO_OutErr_FctType)CopyCDCtoUARTStdIOSendChar, /* stdout */
+  (CLS1_StdIO_OutErr_FctType)CopyCDCtoUARTStdIOSendChar, /* stderr */
+  CDC_StdIOKeyPressed /* if input is not empty */
+};
+#endif
+
+
+#if PL_CONFIG_HAS_SEGGER_RTT
+static CLS1_ConstStdIOType RTT_Stdio = {
+  (CLS1_StdIO_In_FctType)RTT1_StdIOReadChar, /* stdin */
+  (CLS1_StdIO_OutErr_FctType)RTT1_StdIOSendChar, /* stdout */
+  (CLS1_StdIO_OutErr_FctType)RTT1_StdIOSendChar, /* stderr */
+  RTT1_StdIOKeyPressed /* if input is not empty */
+};
+#endif
+
+static void ShellTask(void *pvParameters) {
   static unsigned char localConsole_buf[48];
 #if PL_CONFIG_HAS_USB_CDC
   static unsigned char cdc_buf[48];
@@ -134,10 +191,13 @@ static portTASK_FUNCTION(ShellTask, pvParameters) {
 #if PL_CONFIG_HAS_BLUETOOTH
   static unsigned char bluetooth_buf[48];
 #endif
-#if CLS1_DEFAULT_SERIAL
-  CLS1_ConstStdIOTypePtr ioLocal = CLS1_GetStdio();  
+#if PL_CONFIG_HAS_SEGGER_RTT
+  static unsigned char rtt_buf[48];
 #endif
-  
+#if CLS1_DEFAULT_SERIAL
+  CLS1_ConstStdIOTypePtr ioLocal = CLS1_GetStdio();
+#endif
+
   (void)pvParameters; /* not used */
 #if PL_CONFIG_HAS_USB_CDC
   cdc_buf[0] = '\0';
@@ -145,20 +205,65 @@ static portTASK_FUNCTION(ShellTask, pvParameters) {
 #if PL_CONFIG_HAS_BLUETOOTH
   bluetooth_buf[0] = '\0';
 #endif
+#if PL_CONFIG_HAS_SEGGER_RTT
+  rtt_buf[0] = '\0';
+#endif
   localConsole_buf[0] = '\0';
 #if CLS1_DEFAULT_SERIAL
   (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, ioLocal, CmdParserTable);
 #endif
+#if PL_CONFIG_HAS_SEGGER_RTT
+  (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, &RTT_Stdio, CmdParserTable);
+#endif
+
+
   for(;;) {
 #if CLS1_DEFAULT_SERIAL
     (void)CLS1_ReadAndParseWithCommandTable(localConsole_buf, sizeof(localConsole_buf), ioLocal, CmdParserTable);
 #endif
 #if PL_CONFIG_HAS_USB_CDC
+#if SHELL_COPY_CDC_TO_UART
+    (void)CLS1_ReadAndParseWithCommandTable(cdc_buf, sizeof(cdc_buf), &CopyCDCtoUARTStdio, CmdParserTable);
+#else
     (void)CLS1_ReadAndParseWithCommandTable(cdc_buf, sizeof(cdc_buf), &CDC_stdio, CmdParserTable);
+#endif
 #endif
 #if PL_CONFIG_HAS_BLUETOOTH
     (void)CLS1_ReadAndParseWithCommandTable(bluetooth_buf, sizeof(bluetooth_buf), &BT_stdio, CmdParserTable);
 #endif
+#if PL_CONFIG_HAS_SEGGER_RTT
+    (void)CLS1_ReadAndParseWithCommandTable(rtt_buf, sizeof(rtt_buf), &RTT_Stdio, CmdParserTable);
+#endif
+#if PL_CONFIG_HAS_SHELL_QUEUE
+#if PL_SQUEUE_SINGLE_CHAR
+    {
+        /*! \todo Handle shell queue */
+      unsigned char ch;
+
+      while((ch=SQUEUE_ReceiveChar()) && ch!='\0') {
+    #if CLS1_DEFAULT_SERIAL
+       ioLocal->stdOut(ch);
+    #endif
+    #if PL_CONFIG_HAS_BLUETOOTH
+//        BT_stdio.stdOut(ch); /* copy on Bluetooth */
+    #endif
+    #if PL_CONFIG_HAS_USB_CDC
+        CDC_stdio.stdOut(ch); /* copy on USB CDC */
+    #endif
+      }
+    }
+#else /* PL_SQUEUE_SINGLE_CHAR */
+    {
+      const unsigned char *msg;
+
+      msg = SQUEUE_ReceiveMessage();
+      if (msg!=NULL) {
+        CLS1_SendStr(msg, CLS1_GetStdio()->stdOut);
+        FRTOS1_vPortFree((void*)msg);
+      }
+    }
+#endif /* PL_SQUEUE_SINGLE_CHAR */
+#endif /* PL_CONFIG_HAS_SHELL_QUEUE */
     FRTOS1_vTaskDelay(10/portTICK_RATE_MS);
   } /* for */
 }
@@ -178,4 +283,8 @@ void SHELL_Init(void) {
 void SHELL_Deinit(void) {
 }
 
-#endif /* PL_HAS_SHELL */
+#endif /* PL_CONFIG_HAS_SHELL */
+
+
+
+

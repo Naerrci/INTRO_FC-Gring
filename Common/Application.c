@@ -44,12 +44,15 @@
   #include "FDisp1.h"
   #include "GFONT1.h"
 #endif
+#if PL_CONFIG_HAS_SHELL
+  #include "Shell.h"
+#endif
 
 #if PL_CONFIG_IS_FRDM
 void smFRDM(Event_t event) {
 	// Key A
 	if(event.eventName == evKeyAPressed) {
-		//CLS1_SendStr("A Pressed\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Pressed\r\n", CLS1_GetStdio()->stdOut);
 		//LED1_On();
 		#if PL_CONFIG_HAS_SNAKE
 			EVNT_SetEvent_Sty(EVNT_SNAKE_UP);
@@ -58,12 +61,12 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyAReleased) {
-		//CLS1_SendStr("A Released\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Released\r\n", CLS1_GetStdio()->stdOut);
 		//LED1_Off();
 	}
 
 	if(event.eventName == evKeyALongPressed) {
-		//CLS1_SendStr("A Long Press\r\n", CLS1_GetStdio()->stdOut);
+		CLS1_SendStr("A Long Press\r\n", CLS1_GetStdio()->stdOut);
 		//LED2_Neg();
 	}
 
@@ -90,19 +93,19 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyBReleased ) {
-		CLS1_SendStr("B Released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("B Released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyBLongPressed ) {
-		CLS1_SendStr("B Long Press\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("B Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyBClick ) {
-		CLS1_SendStr("B Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("B Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyBDoubleClick ) {
-		CLS1_SendStr("B Double Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("B Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	// Key C
@@ -114,19 +117,19 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyCReleased ) {
-		CLS1_SendStr("C Released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("C Released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyCLongPressed ) {
-		CLS1_SendStr("C Long Press\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("C Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyCClick ) {
-		CLS1_SendStr("C Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("C Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyCDoubleClick ) {
-		CLS1_SendStr("C Double Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("C Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	// Key D
@@ -138,32 +141,32 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyDReleased ) {
-		CLS1_SendStr("D Released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("D Released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyDLongPressed ) {
-		CLS1_SendStr("D Long Press\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("D Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyDClick ) {
-		CLS1_SendStr("D Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("D Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyDDoubleClick ) {
-		CLS1_SendStr("D Double Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("D Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	// Key E
 	if(event.eventName == evKeyEPressed ) {
-		CLS1_SendStr("E Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("E Pressed\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyEReleased ) {
-		CLS1_SendStr("E Released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("E Released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyELongPressed ) {
-		CLS1_SendStr("E Long Press\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("E Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyEClick ) {
@@ -174,7 +177,8 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyEDoubleClick ) {
-		CLS1_SendStr("E Double Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("E Double Click\r\n", CLS1_GetStdio()->stdOut);
+		SHELL_SendString("Test Queue: Hallo FC-Gring from FRDM\r\n");
 	}
 
 	// Key F
@@ -203,11 +207,11 @@ void smFRDM(Event_t event) {
 
 	// Key G
 	if(event.eventName == evKeyGPressed ) {
-		CLS1_SendStr("G Pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("G Pressed\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyGReleased ) {
-		CLS1_SendStr("G Released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("G Released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyGLongPressed ) {
@@ -232,7 +236,7 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyGClick ) {
-		CLS1_SendStr("G Click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("G Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evKeyGDoubleClick ) {
@@ -246,25 +250,26 @@ void smFRDM(Event_t event) {
 #if PL_CONFIG_IS_ROBO
 void smROBO(Event_t event){
 	if(event.eventName == evBt1Pressed) {
-		CLS1_SendStr("Bt1 pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("Bt1 pressed\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evBt1Released) {
-		CLS1_SendStr("Bt1 released\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("Bt1 released\r\n", CLS1_GetStdio()->stdOut);
 	}
 
 	if(event.eventName == evBt1Click) {
-		CLS1_SendStr("Bt1 click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("Bt1 click\r\n", CLS1_GetStdio()->stdOut);
 		startBuzzer(High,1000);
 	}
 
 	if(event.eventName == evBt1DoubleClick) {
-		CLS1_SendStr("Bt1 double click\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("Bt1 double click\r\n", CLS1_GetStdio()->stdOut);
+		SHELL_SendString("Test Queue: Hallo FC-Gring from ROBO\r\n");
 		startBuzzer(Middle,1000);
 	}
 
 	if(event.eventName == evBt1LongPressed) {
-		CLS1_SendStr("Bt1 long pressed\r\n", CLS1_GetStdio()->stdOut);
+		//CLS1_SendStr("Bt1 long pressed\r\n", CLS1_GetStdio()->stdOut);
 		startBuzzer(Low,1000);
 	}
 
@@ -287,12 +292,13 @@ void APP_Run(void) {
   PDC1_WriteLineStr(2, "from the");
   PDC1_WriteLineStr(3, "KL25Z Freedom");
   PDC1_WriteLineStr(4, "Board!");
+  PDC1_WriteLineStr(6, "FC-Gring =)");
 
-  GDisp1_Clear();
-  GDisp1_DrawCircle(30, 15, 10, GDisp1_COLOR_BLACK);
-  GDisp1_DrawFilledBox(0, 5, 6, 20, GDisp1_COLOR_BLACK);
-  GDisp1_DrawLine(30, 30, 45, 60, GDisp1_COLOR_BLACK);
-  GDisp1_UpdateFull();
+//  GDisp1_Clear();
+//  GDisp1_DrawCircle(30, 15, 10, GDisp1_COLOR_BLACK);
+//  GDisp1_DrawFilledBox(0, 5, 6, 20, GDisp1_COLOR_BLACK);
+//  GDisp1_DrawLine(30, 30, 45, 60, GDisp1_COLOR_BLACK);
+//  GDisp1_UpdateFull();
 #endif
 #if PL_CONFIG_HAS_RTOS
   RTOS_Run();
