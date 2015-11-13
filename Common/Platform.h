@@ -38,6 +38,7 @@
 #define PL_CONFIG_HAS_SHELL_QUEUE		PL_CONFIG_NOF_SHELL_QUEUE > 0
 #define PL_HAS_CONFIG_SEMAPHORE       	(0)
 #define PL_CONFIG_HAS_REFLECTANCE     	(1 && defined(PL_CONFIG_IS_ROBO))
+#define PL_CONFIG_HAS_MOTOR				(1 && defined(PL_CONFIG_IS_ROBO))
 
 #define PL_CONFIG_HAS_SEMAPHORE       	(0)
 #define PL_SQUEUE_SINGLE_CHAR        	(1)

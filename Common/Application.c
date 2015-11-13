@@ -47,6 +47,9 @@
 #if PL_CONFIG_HAS_SHELL
   #include "Shell.h"
 #endif
+#if PL_CONFIG_HAS_MOTOR
+  #include "Motor.h"
+#endif
 
 #if PL_CONFIG_IS_FRDM
 void smFRDM(Event_t event) {
@@ -248,6 +251,10 @@ void smFRDM(Event_t event) {
 #endif
 
 #if PL_CONFIG_IS_ROBO
+
+	//MOT_MotorDevice motorL;
+	//motorL = *MOT_GetMotorHandle((MOT_MotorSide) MOT_MOTOR_LEFT);
+
 void smROBO(Event_t event){
 	if(event.eventName == evBt1Pressed) {
 		//CLS1_SendStr("Bt1 pressed\r\n", CLS1_GetStdio()->stdOut);
@@ -260,6 +267,7 @@ void smROBO(Event_t event){
 	if(event.eventName == evBt1Click) {
 		//CLS1_SendStr("Bt1 click\r\n", CLS1_GetStdio()->stdOut);
 		startBuzzer(High,1000);
+	//	MOT_ChangeSpeedPercent(&motorL, (MOT_SpeedPercent) 50);
 	}
 
 	if(event.eventName == evBt1DoubleClick) {

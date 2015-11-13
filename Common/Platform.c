@@ -34,6 +34,9 @@
 #if PL_CONFIG_HAS_REFLECTANCE
   #include "Reflectance.h"
 #endif
+#if PL_CONFIG_HAS_MOTOR
+  #include "Motor.h"
+#endif
 
 
 /*
@@ -74,6 +77,9 @@ void PL_Init(void) {
 #if PL_CONFIG_HAS_REFLECTANCE
   REF_Init();
 #endif
+#if PL_CONFIG_HAS_MOTOR
+  MOT_Init();
+#endif
 
 }
 
@@ -108,6 +114,9 @@ void PL_Deinit(void) {
 #endif
 #if PL_CONFIG_HAS_SHELL_QUEUE
   SQUEUE_Deinit();
+#endif
+#if PL_CONFIG_HAS_MOTOR
+  MOT_Deinit();
 #endif
 }
 
