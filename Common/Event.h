@@ -65,6 +65,9 @@ typedef struct Event_ {
 			evTimerBuzzerLow,
 			evBuzzerStop,
 
+			// LineSensor Events
+			evRefStartStopCalibration,
+
 			// shit events
 			evTimer,
 		#endif
