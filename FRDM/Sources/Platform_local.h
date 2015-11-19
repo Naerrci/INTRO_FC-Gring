@@ -19,6 +19,7 @@
 #define PL_CONFIG_NOF_BLUETOOTH 	(0)
 #define PL_CONFIG_NOF_USB_CDC   	(1)
 #define PL_CONFIG_NOF_SHELL_QUEUE   (1)
+#define PL_CONFIG_NOF_NVM			(0)
 
 #define PL_CONFIG_IS_FRDM			(1)
 #define PL_CONFIG_IS_ROBO			(0)
