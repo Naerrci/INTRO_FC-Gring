@@ -8,6 +8,7 @@
 
 #include "Platform.h"
 #if PL_CONFIG_HAS_MCP4728
+#include "Personal_config.h"
 #include "MCP4728.h"
 #include "GI2C1.h"
 #include "UTIL1.h"
@@ -28,7 +29,18 @@
 #define MCP4728_GC_WAKEUP           0x09 /* general call wake-up command */
 #define MCP4728_GC_READ             0x0C /* general call read address bits command */
 
-#define MCP4728_I2C_ADDRESS 0x61 /* default address of device (4728A1), for lab Zumo */
+
+#if PL_PERSONAL_NAME_IS_JON
+  #define MCP4728_I2C_ADDRESS 0x60	/* default address of device (4728A1), for lab Zumo */
+#endif
+#if PL_PERSONAL_NAME_IS_SIMON
+  #define MCP4728_I2C_ADDRESS 0x61	/* default address of device (4728A1), for lab Zumo */
+#endif
+#if PL_PERSONAL_NAME_IS_MARCO
+  #define MCP4728_I2C_ADDRESS 0x61	/* default address of device (4728A1), for lab Zumo */
+#endif
+
+
 
 bool MCP4728_IsBusy(void) {
 #if PL_CONFIG_HAS_MCP4728_RDY

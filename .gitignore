@@ -10,3 +10,6 @@
 *.g_x
 .cwGeneratedFileSetLog
 ProjectInfo.xml
+
+# config file with local settings
+#Personal_config.h

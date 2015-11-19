@@ -31,6 +31,7 @@
 #include "Event.h"
 #include "Keys.h"
 #include "Timer.h"
+#include "Ultrasonic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -239,6 +240,7 @@ void GI2C1_OnReleaseBus(void)
 void TU_US_OnCounterRestart(LDD_TUserData *UserDataPtr)
 {
   /* Write your code here ... */
+	US_EventEchoOverflow(UserDataPtr);
 }
 
 /*
@@ -263,6 +265,7 @@ void TU_US_OnCounterRestart(LDD_TUserData *UserDataPtr)
 void TU_US_OnChannel0(LDD_TUserData *UserDataPtr)
 {
   /* Write your code here ... */
+	US_EventEchoCapture(UserDataPtr);
 }
 
 /* END Events */
