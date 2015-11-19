@@ -89,12 +89,12 @@ void MOT_ChangeSpeedPercent(MOT_MotorDevice *motor, MOT_SpeedPercent relPercent)
 
 void MOT_SetDirection(MOT_MotorDevice *motor, MOT_Direction dir) {
   /*! \todo Check if directions are working properly with your hardware */
-  if (dir==MOT_DIR_BACKWARD) {
+  if (dir==MOT_DIR_FORWARD) {
     motor->DirPutVal(1);
     if (motor->currSpeedPercent<0) {
       motor->currSpeedPercent = -motor->currSpeedPercent;
     }
-  } else if (dir==MOT_DIR_FORWARD) {
+  } else if (dir==MOT_DIR_BACKWARD) {
     motor->DirPutVal(0);
     if (motor->currSpeedPercent>0) {
       motor->currSpeedPercent = -motor->currSpeedPercent;
