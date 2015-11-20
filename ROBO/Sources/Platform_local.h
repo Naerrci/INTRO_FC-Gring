@@ -24,4 +24,11 @@
 #define PL_CONFIG_IS_FRDM			(0)
 #define PL_CONFIG_IS_ROBO			(1)
 
+
+/* Name des users
+ * Dies muss lokal angepasst werden und dann nicht committed werden */
+#define PL_PERSONAL_NAME_IS_JON					(1)
+#define PL_PERSONAL_NAME_IS_SIMON				(0)
+#define PL_PERSONAL_NAME_IS_MARCO				(0)
+
 #endif /* SOURCES_PLATFORM_LOCAL_H_ */
