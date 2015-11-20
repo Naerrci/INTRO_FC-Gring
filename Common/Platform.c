@@ -52,6 +52,9 @@
 #if PL_CONFIG_HAS_PID
   #include "PID.h"
 #endif
+#if PL_CONFIG_HAS_DRIVE
+  #include "Drive.h"
+#endif
 
 
 
@@ -108,6 +111,10 @@ void PL_Init(void) {
 #if PL_CONFIG_HAS_PID
   PID_Init();
 #endif
+#if PL_CONFIG_HAS_DRIVE
+  DRV_Init();
+#endif
+
 }
 
 
@@ -153,6 +160,9 @@ void PL_Deinit(void) {
 #endif
 #if PL_CONFIG_HAS_CONFIG_NVM
   NVMC_Deinit();
+#endif
+#if PL_CONFIG_HAS_DRIVE
+  DRV_Deinit();
 #endif
 
 }

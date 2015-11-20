@@ -52,6 +52,9 @@
 #if PL_CONFIG_HAS_PID
   #include "PID.h"
 #endif
+#if PL_CONFIG_HAS_DRIVE
+  #include "Drive.h"
+#endif
 
 #define SHELL_COPY_CDC_TO_UART   (1)
 
@@ -99,6 +102,9 @@ static const CLS1_ParseCommandCallback CmdParserTable[] =
 #endif
 #if PL_CONFIG_HAS_PID
   PID_ParseCommand,
+#endif
+#if PL_CONFIG_HAS_DRIVE
+  DRV_ParseCommand,
 #endif
 
   NULL /* Sentinel */
