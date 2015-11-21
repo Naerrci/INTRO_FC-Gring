@@ -32,6 +32,7 @@
 #include "Keys.h"
 #include "Timer.h"
 #include "Ultrasonic.h"
+#include "Tacho.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -120,6 +121,7 @@ void FRTOS1_vApplicationTickHook(void)
   /* Called for every RTOS tick. */
   /* Write your code here ... */
 	TMR_OnInterrupt();
+	TACHO_Sample();
 }
 
 /*
@@ -182,6 +184,10 @@ void FRTOS1_vApplicationMallocFailedHook(void)
 void QuadInt_OnInterrupt(void)
 {
   /* Write your code here ... */
+#if PL_CONFIG_HAS_QUADRATURE
+  Q4CLeft_Sample();
+  Q4CRight_Sample();
+#endif
 }
 
 /*

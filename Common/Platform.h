@@ -53,7 +53,7 @@
 #define PL_CONFIG_HAS_ULTRASONIC        (1 && defined(PL_BOARD_IS_ROBO))
 #define PL_CONFIG_HAS_PID               (1 && PL_CONFIG_HAS_MOTOR_TACHO)
 
-#define PL_CONFIG_HAS_DRIVE				(1 && PL_CONFIG_HAS_PID)
+#define PL_CONFIG_HAS_DRIVE				(0 && PL_CONFIG_HAS_PID)
 
 
 

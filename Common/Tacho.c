@@ -17,7 +17,7 @@
 #include "UTIL1.h"
 #include "FRTOS1.h"
 
-#define TACHO_SAMPLE_PERIOD_MS (1)
+#define TACHO_SAMPLE_PERIOD_MS (10)
   /*!< \todo speed sample period in ms. Make sure that speed is sampled at the given rate. */
 #define NOF_HISTORY (16U+1U)
   /*!< number of samples for speed calculation (>0):the more, the better, but the slower. */
@@ -91,7 +91,7 @@ void TACHO_CalcSpeed(void) {
   TACHO_currRightSpeed = -speedRight; /* store current speed in global variable */
 }
 
-void TACHO_Sample(void) {
+void TACHO_Sample(void) {	// is called every RTOS tick
   /*! \todo Implement/change function as needed, make sure implementation below matches your needs */
   static int cnt = 0;
   /* get called from the RTOS tick counter. Divide the frequency. */
@@ -146,6 +146,16 @@ uint8_t TACHO_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_S
 }
 #endif /* PL_HAS_SHELL */
 
+
+static void TachoTask(void *pvParameters) {
+	(void)pvParameters; /* not used */
+	for(;;) {
+		TACHO_Sample();
+		FRTOS1_vTaskDelay(2/portTICK_RATE_MS);
+	  }
+}
+
+
 void TACHO_Deinit(void) {
 }
 
@@ -153,6 +163,11 @@ void TACHO_Init(void) {
   TACHO_currLeftSpeed = 0;
   TACHO_currRightSpeed = 0;
   TACHO_PosHistory_Index = 0;
+//#if PL_CONFIG_HAS_RTOS
+//  if (FRTOS1_xTaskCreate(TachoTask, "Tacho", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+1, NULL) != pdPASS) {
+//    for(;;){} /* error */
+//  }
+//#endif
 }
 
 #endif /* PL_CONFIG_HAS_MOTOR_TACHO */
