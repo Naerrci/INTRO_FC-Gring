@@ -20,7 +20,7 @@
 #include "Sem.h"
 #include "LED.h"
 
-#define USE_SEMAPHORES 1
+#define USE_SEMAPHORES 0
 
 #if USE_SEMAPHORES
 static portTASK_FUNCTION(vSlaveTask, pvParameters) {

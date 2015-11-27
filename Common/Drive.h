@@ -1,9 +1,9 @@
 /**
  * \file
- * \brief Drive interface.
+ * \brief Interface to drive the robot.
  * \author Erich Styger, erich.styger@hslu.ch
  *
- * This module implements a simple 'drive' task which is responsible to move the robot around.
+ * This module allows to drive the robot and to perform turns.
  */
 
 #ifndef DRIVE_H_
@@ -14,34 +14,49 @@
 
 #if PL_CONFIG_HAS_SHELL
 #include "CLS1.h"
+
 /*!
- * \brief Shell command line parser.
- * \param[in] cmd Pointer to command string
- * \param[out] handled If command is handled by the parser
- * \param[in] io Std I/O handler of shell
+ * \brief Parses a command
+ * \param cmd Command string to be parsed
+ * \param handled Sets this variable to TRUE if command was handled
+ * \param io I/O stream to be used for input/output
+ * \return Error code, ERR_OK if everything was fine
  */
 uint8_t DRV_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOType *io);
-#endif
+#endif /* PL_CONFIG_HAS_SHELL */
+
+typedef enum {
+  DRV_MODE_NONE,
+  DRV_MODE_STOP,
+  DRV_MODE_SPEED,
+  DRV_MODE_POS,
+} DRV_Mode;
+
+uint8_t DRV_SetSpeed(int32_t left, int32_t right);
+uint8_t DRV_SetPos(int32_t left, int32_t right);
+bool DRV_IsDrivingBackward(void);
+uint8_t DRV_SetMode(DRV_Mode mode);
+DRV_Mode DRV_GetMode(void);
+bool DRV_IsStopped(void);
+bool DRV_HasTurned(void);
 
 /*!
- * \brief Enables or disbles the drive mode.
- * \param enable TRUE to enable, FALSE otherwise.
+ * \brief Stops the engines
+ * \param timoutMs timout in milliseconds for operation
+ * \return ERR_OK if stopped, ERR_BUSY for timeout condition.
  */
-void DRV_EnableDisable(bool enable);
+uint8_t DRV_Stop(int32_t timeoutMs);
 
 /*!
- * \brief Sets the driving speed for left and right.
- * \param left Left wheel speed.
- * \param right Right wheel speed.
+ * \brief Driver initialization.
  */
-void DRV_SetSpeed(int32_t left, int32_t right);
-
-/*! \brief Driver initialization */
 void DRV_Init(void);
 
-/*! \brief Driver de-initialization */
+/*!
+ * \brief Driver de-initialization.
+ */
 void DRV_Deinit(void);
 
-#endif /* PL_HAS_DRIVE */
+#endif /* PL_CONFIG_HAS_DRIVE */
 
 #endif /* DRIVE_H_ */

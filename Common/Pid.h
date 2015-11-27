@@ -37,6 +37,8 @@ void PID_Speed(int32_t currSpeed, int32_t setSpeed, bool isLeft);
  */
 void PID_Pos(int32_t currPos, int32_t setPos, bool isLeft);
 
+void PID_Line(uint16_t currLine, uint16_t setLine);
+
 /*! \brief Driver initialization */
 void PID_Start(void);
 

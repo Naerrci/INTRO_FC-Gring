@@ -55,6 +55,12 @@
 #if PL_CONFIG_HAS_DRIVE
   #include "Drive.h"
 #endif
+#if PL_CONFIG_HAS_TURN
+  #include "Turn.h"
+#endif
+#if PL_CONFIG_HAS_LINE_FOLLOW
+  #include "LineFollow.h"
+#endif
 
 
 
@@ -113,6 +119,12 @@ void PL_Init(void) {
 #endif
 #if PL_CONFIG_HAS_DRIVE
   DRV_Init();
+#endif
+#if PL_CONFIG_HAS_TURN
+  TURN_Init();
+#endif
+#if PL_CONFIG_HAS_LINE_FOLLOW
+  LF_Init();
 #endif
 
 }

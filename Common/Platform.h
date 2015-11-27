@@ -53,8 +53,15 @@
 #define PL_CONFIG_HAS_ULTRASONIC        (1 && defined(PL_BOARD_IS_ROBO))
 #define PL_CONFIG_HAS_PID               (1 && PL_CONFIG_HAS_MOTOR_TACHO)
 
-#define PL_CONFIG_HAS_DRIVE				(0 && PL_CONFIG_HAS_PID)
+#define PL_CONFIG_HAS_DRIVE				(1 && PL_CONFIG_HAS_PID)
 
+#define PL_CONFIG_HAS_TURN              (1 && PL_CONFIG_HAS_DRIVE)
+#define PL_CONFIG_HAS_LINE_FOLLOW       (1 && PL_CONFIG_HAS_REFLECTANCE)
+#define PL_CONFIG_APP_LINE_MAZE         (0)
+
+#define PL_CONFIG_HAS_RADIO             (1)
+#define PL_CONFIG_HAS_REMOTE            (1 && PL_CONFIG_HAS_RADIO)
+#define PL_APP_CONTROL_SENDER           (1 && PL_CONFIG_HAS_JOYSTICK && defined(PL_CONFIG_BOARD_IS_FRDM))
 
 
 

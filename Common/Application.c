@@ -50,6 +50,12 @@
 #if PL_CONFIG_HAS_MOTOR
   #include "Motor.h"
 #endif
+#if PL_CONFIG_HAS_REFLECTANCE
+	#include "Reflectance.h"
+#endif
+#if PL_CONFIG_HAS_LINE_FOLLOW
+  #include "LineFollow.h"
+#endif
 
 #if PL_CONFIG_IS_FRDM
 void smFRDM(Event_t event) {
@@ -254,6 +260,7 @@ void smFRDM(Event_t event) {
 
 	//MOT_MotorDevice motorL;
 	//motorL = *MOT_GetMotorHandle((MOT_MotorSide) MOT_MOTOR_LEFT);
+static bool start = FALSE;
 
 void smROBO(Event_t event){
 	if(event.eventName == evBt1Pressed) {
@@ -266,14 +273,23 @@ void smROBO(Event_t event){
 
 	if(event.eventName == evBt1Click) {
 		//CLS1_SendStr("Bt1 click\r\n", CLS1_GetStdio()->stdOut);
-		startBuzzer(High,1000);
+		//startBuzzer(High,200);
 	//	MOT_ChangeSpeedPercent(&motorL, (MOT_SpeedPercent) 50);
+		if(!start) {
+			LF_StartFollowing();
+			start = FALSE;
+		}
+		else {
+			LF_StopFollowing();
+			start = TRUE;
+		}
 	}
 
 	if(event.eventName == evBt1DoubleClick) {
-		//CLS1_SendStr("Bt1 double click\r\n", CLS1_GetStdio()->stdOut);
-		SHELL_SendString("Test Queue: Hallo FC-Gring from ROBO\r\n");
-		startBuzzer(Middle,1000);
+//		//CLS1_SendStr("Bt1 double click\r\n", CLS1_GetStdio()->stdOut);
+//		SHELL_SendString("Test Queue: Hallo FC-Gring from ROBO\r\n");
+//		startBuzzer(Middle,1000);
+		REF_CalibrateStartStop();
 	}
 
 	if(event.eventName == evBt1LongPressed) {

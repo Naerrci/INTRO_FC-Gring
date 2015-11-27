@@ -247,9 +247,86 @@ uint16_t REF_GetLineValue(void) {
   return refCenterLineVal;
 }
 
+#if PL_CONFIG_HAS_LINE_FOLLOW
+static REF_LineKind ReadLineKind(SensorTimeType val[REF_NOF_SENSORS]) {
+  uint32_t sum, sumLeft, sumRight, outerLeft, outerRight;
+  int i;
+  #define REF_MIN_LINE_VAL      0x100   /* minimum value indicating a line */
+
+  for(i=0;i<REF_NOF_SENSORS;i++) {
+    if (val[i]<REF_MIN_LINE_VAL) { /* smaller value? White seen! */
+      break;
+    }
+  }
+  if (i==REF_NOF_SENSORS) { /* all sensors see 'black' */
+    return REF_LINE_FULL;
+  }
+  /* check the line type */
+  sum = 0; sumLeft = 0; sumRight = 0;
+  for(i=0;i<REF_NOF_SENSORS;i++) {
+    if (val[i]>REF_MIN_LINE_VAL) { /* count only line values */
+      sum += val[i];
+      if (i<REF_NOF_SENSORS/2) {
+#if REF_SENSOR1_IS_LEFT
+        sumLeft += val[i];
+#else
+        sumRight += val[i];
+#endif
+      } else {
+#if REF_SENSOR1_IS_LEFT
+        sumRight += val[i];
+#else
+        sumLeft += val[i];
+#endif
+      }
+    }
+  }
+#if REF_SENSOR1_IS_LEFT
+  outerLeft = val[0];
+  outerRight = val[REF_NOF_SENSORS-1];
+#else
+  outerLeft = val[REF_NOF_SENSORS-1];
+  outerRight = val[0];
+#endif
+
+  #define MIN_LEFT_RIGHT_SUM   ((REF_NOF_SENSORS*1000)/4) /* 1/4 of full sensor values */
+
+  if (outerLeft>=REF_MIN_LINE_VAL && outerRight<REF_MIN_LINE_VAL && sumLeft>MIN_LEFT_RIGHT_SUM && sumRight<MIN_LEFT_RIGHT_SUM) {
+#if PL_APP_LINE_MAZE
+    return REF_LINE_LEFT; /* line going to the left side */
+#else
+    return REF_LINE_STRAIGHT;
+#endif
+  } else if (outerLeft<REF_MIN_LINE_VAL && outerRight>=REF_MIN_LINE_VAL && sumRight>MIN_LEFT_RIGHT_SUM && sumLeft<MIN_LEFT_RIGHT_SUM) {
+#if PL_APP_LINE_MAZE
+    return REF_LINE_RIGHT; /* line going to the right side */
+#else
+    return REF_LINE_STRAIGHT;
+#endif
+  } else if (outerLeft>=REF_MIN_LINE_VAL && outerRight>=REF_MIN_LINE_VAL && sumRight>MIN_LEFT_RIGHT_SUM && sumLeft>MIN_LEFT_RIGHT_SUM) {
+    return REF_LINE_FULL; /* full line */
+  } else if (sumRight==0 && sumLeft==0 && sum == 0) {
+    return REF_LINE_NONE; /* no line */
+  } else {
+    return REF_LINE_STRAIGHT; /* straight line forward */
+  }
+}
+#endif
+
+#if PL_CONFIG_HAS_LINE_FOLLOW
+static REF_LineKind refLineKind = REF_LINE_NONE;
+
+REF_LineKind REF_GetLineKind(void) {
+  return refLineKind;
+}
+#endif
+
 static void REF_Measure(void) {
   ReadCalibrated(SensorCalibrated, SensorRaw);
   refCenterLineVal = ReadLine(SensorCalibrated, SensorRaw, REF_USE_WHITE_LINE);
+#if PL_CONFIG_HAS_LINE_FOLLOW
+  refLineKind = ReadLineKind(SensorCalibrated);
+#endif
 }
 
 static uint8_t PrintHelp(const CLS1_StdIOType *io) {
