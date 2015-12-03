@@ -56,6 +56,9 @@
 #if PL_CONFIG_HAS_LINE_FOLLOW
   #include "LineFollow.h"
 #endif
+#if PL_CONFIG_HAS_REMOTE
+  #include "Remote.h"
+#endif
 
 #if PL_CONFIG_IS_FRDM
 void smFRDM(Event_t event) {
@@ -187,7 +190,15 @@ void smFRDM(Event_t event) {
 
 	if(event.eventName == evKeyEDoubleClick ) {
 		//CLS1_SendStr("E Double Click\r\n", CLS1_GetStdio()->stdOut);
-		SHELL_SendString("Test Queue: Hallo FC-Gring from FRDM\r\n");
+		//SHELL_SendString("Test Queue: Hallo FC-Gring from FRDM\r\n");
+#if PL_CONFIG_HAS_REMOTE
+		if (REMOTE_GetOnOff()) {
+			REMOTE_SetOnOff(FALSE);
+		}
+		else {
+			REMOTE_SetOnOff(TRUE);
+		}
+#endif
 	}
 
 	// Key F
@@ -200,7 +211,9 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyFLongPressed ) {
+#if PL_CONFIG_HAS_SNAKE
 		FRTOS1_vTaskSuspend(SnakeTaskHandle);
+#endif
 		//CLS1_SendStr("F Long Press\r\n", CLS1_GetStdio()->stdOut);
 	}
 
@@ -210,7 +223,9 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyFDoubleClick ) {
+#if PL_CONFIG_HAS_SNAKE
 		FRTOS1_vTaskResume(SnakeTaskHandle);
+#endif
 		//CLS1_SendStr("F Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 
@@ -224,6 +239,7 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyGLongPressed ) {
+#if PL_CONFIG_HAS_SNAKE
 		FRTOS1_vTaskDelete(SnakeTaskHandle);
 		FDisp1_PixelDim x, y;
 		FDisp1_PixelDim charHeight, totalHeight;
@@ -242,6 +258,7 @@ void smFRDM(Event_t event) {
 		GDisp1_UpdateFull();
 		SnakeTaskHandle = NULL;
 		//CLS1_SendStr("G Long Press\r\n", CLS1_GetStdio()->stdOut);
+#endif
 	}
 
 	if(event.eventName == evKeyGClick ) {
@@ -249,8 +266,10 @@ void smFRDM(Event_t event) {
 	}
 
 	if(event.eventName == evKeyGDoubleClick ) {
+#if PL_CONFIG_HAS_SNAKE
 		if(SnakeTaskHandle == NULL)
 			SNAKE_Init();
+#endif
 		//CLS1_SendStr("G Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
 }

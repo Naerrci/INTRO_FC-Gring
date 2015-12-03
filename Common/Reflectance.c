@@ -446,6 +446,24 @@ byte REF_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOT
     }
     *handled = TRUE;
     return ERR_OK;
+  } else if (UTIL1_strcmp((char*)cmd, "ref save")==0) {
+      if (refState==REF_STATE_CALIBRATING) {
+        REF_CalibrateStartStop();
+      } else {
+        CLS1_SendStr((unsigned char*)"ERROR: can not save data.\r\n", io->stdErr);
+        return ERR_FAILED;
+      }
+      *handled = TRUE;
+      return ERR_OK;
+  } else if (UTIL1_strcmp((char*)cmd, "ref load")==0) {
+      if (refState==REF_STATE_CALIBRATING) {
+        REF_CalibrateStartStop();
+      } else {
+        CLS1_SendStr((unsigned char*)"ERROR: can not load saved data.\r\n", io->stdErr);
+        return ERR_FAILED;
+      }
+      *handled = TRUE;
+      return ERR_OK;
 #endif
   }
   return ERR_OK;
@@ -494,6 +512,8 @@ static void REF_StateMachine(void) {
     
     case REF_STATE_STOP_CALIBRATION:
       SHELL_SendString((unsigned char*)"...stopping calibration.\r\n");
+      // save calib data
+
       refState = REF_STATE_READY;
       break;
         

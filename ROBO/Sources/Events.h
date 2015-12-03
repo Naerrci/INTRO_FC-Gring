@@ -106,6 +106,16 @@
 #include "I2C1.h"
 #include "TU_US.h"
 #include "TRIG.h"
+#include "RNET1.h"
+#include "SM2_nRF.h"
+#include "SMasterLdd1.h"
+#include "RF1.h"
+#include "CE1.h"
+#include "BitIoLdd19.h"
+#include "CSN1.h"
+#include "BitIoLdd20.h"
+#include "IRQ1.h"
+#include "ExtIntLdd2.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -285,6 +295,48 @@ void TU_US_OnCounterRestart(LDD_TUserData *UserDataPtr);
 */
 /* ===================================================================*/
 void TU_US_OnChannel0(LDD_TUserData *UserDataPtr);
+
+void RF1_OnActivate(void);
+/*
+** ===================================================================
+**     Event       :  RF1_OnActivate (module Events)
+**
+**     Component   :  RF1 [nRF24L01]
+**     Description :
+**         Event called before accessing the bus.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void RF1_OnDeactivate(void);
+/*
+** ===================================================================
+**     Event       :  RF1_OnDeactivate (module Events)
+**
+**     Component   :  RF1 [nRF24L01]
+**     Description :
+**         Event called before releasing the bus.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void RNET1_OnRadioEvent(RNET1_RadioEvent event);
+/*
+** ===================================================================
+**     Event       :  RNET1_OnRadioEvent (module Events)
+**
+**     Component   :  RNET1 [RNet]
+**     Description :
+**         Event created for various radio states, like timeout, ack
+**         received, data sent, ...
+**     Parameters  :
+**         NAME            - DESCRIPTION
+**         event           - 
+**     Returns     : Nothing
+** ===================================================================
+*/
 
 /* END Events */
 

@@ -61,6 +61,18 @@
 #if PL_CONFIG_HAS_LINE_FOLLOW
   #include "LineFollow.h"
 #endif
+#if PL_CONFIG_HAS_RADIO
+  #include "RNet_App.h"
+#endif
+#if PL_CONFIG_HAS_REMOTE
+  #include "Remote.h"
+#endif
+#if PL_CONFIG_HAS_IDENTIFY
+  #include "Identify.h"
+#endif
+#if PL_CONFIG_HAS_LINE_MAZE
+  #include "Maze.h"
+#endif
 
 
 
@@ -126,7 +138,18 @@ void PL_Init(void) {
 #if PL_CONFIG_HAS_LINE_FOLLOW
   LF_Init();
 #endif
-
+#if PL_CONFIG_HAS_RADIO
+  RNETA_Init();
+#endif
+#if PL_CONFIG_HAS_REMOTE
+  REMOTE_Init();
+#endif
+#if PL_CONFIG_HAS_IDENTIFY
+  ID_Init();
+#endif
+#if PL_CONFIG_HAS_LINE_MAZE
+  MAZE_Init();
+#endif
 }
 
 

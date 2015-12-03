@@ -61,6 +61,21 @@
 #if PL_CONFIG_HAS_LINE_FOLLOW
   #include "LineFollow.h"
 #endif
+#if PL_CONFIG_HAS_RADIO
+  #include "RApp.h"
+  #include "RNet_App.h"
+  #include "RNetConf.h"
+#endif
+#if RNET_CONFIG_REMOTE_STDIO
+  #include "RStdIO.h"
+#endif
+#if PL_CONFIG_HAS_REMOTE
+  #include "Remote.h"
+#endif
+#if PL_CONFIG_HAS_LINE_MAZE
+  #include "Maze.h"
+#endif
+#include "KIN1.h"
 
 #define SHELL_COPY_CDC_TO_UART   (1)
 
@@ -109,6 +124,9 @@ static const CLS1_ParseCommandCallback CmdParserTable[] =
 #if PL_CONFIG_HAS_PID
   PID_ParseCommand,
 #endif
+#if KIN1_PARSE_COMMAND_ENABLED
+  KIN1_ParseCommand,
+#endif
 #if PL_CONFIG_HAS_DRIVE
   DRV_ParseCommand,
 #endif
@@ -118,10 +136,24 @@ static const CLS1_ParseCommandCallback CmdParserTable[] =
 #if PL_CONFIG_HAS_LINE_FOLLOW
   LF_ParseCommand,
 #endif
-
-
+#if PL_CONFIG_HAS_RADIO
+#if RNET1_PARSE_COMMAND_ENABLED
+  RNET1_ParseCommand,
+#endif
+  RNETA_ParseCommand,
+#endif
+#if PL_CONFIG_HAS_REMOTE
+  REMOTE_ParseCommand,
+#endif
+#if PL_CONFIG_HAS_LINE_MAZE
+  MAZE_ParseCommand,
+#endif
   NULL /* Sentinel */
 };
+
+void SHELL_ParseCmd(unsigned char *cmd) {
+  (void)CLS1_ParseWithCommandTable(cmd, CLS1_GetStdio(), CmdParserTable);
+}
 
 static uint32_t SHELL_val; /* used as demo value for shell */
 
@@ -255,6 +287,10 @@ static void ShellTask(void *pvParameters) {
 #if CLS1_DEFAULT_SERIAL
   CLS1_ConstStdIOTypePtr ioLocal = CLS1_GetStdio();
 #endif
+#if PL_CONFIG_HAS_RADIO && RNET_CONFIG_REMOTE_STDIO
+  static unsigned char radio_cmd_buf[48];
+  CLS1_ConstStdIOType *ioRemote = RSTDIO_GetStdioRx();
+#endif
 
   (void)pvParameters; /* not used */
 #if PL_CONFIG_HAS_USB_CDC
@@ -270,8 +306,8 @@ static void ShellTask(void *pvParameters) {
 #if CLS1_DEFAULT_SERIAL
   (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, ioLocal, CmdParserTable);
 #endif
-#if PL_CONFIG_HAS_SEGGER_RTT
-  (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, &RTT_Stdio, CmdParserTable);
+#if PL_CONFIG_HAS_RADIO && RNET_CONFIG_REMOTE_STDIO
+  radio_cmd_buf[0] = '\0';
 #endif
 
 
@@ -291,6 +327,10 @@ static void ShellTask(void *pvParameters) {
 #endif
 #if PL_CONFIG_HAS_SEGGER_RTT
     (void)CLS1_ReadAndParseWithCommandTable(rtt_buf, sizeof(rtt_buf), &RTT_Stdio, CmdParserTable);
+#endif
+#if PL_CONFIG_HAS_RADIO && RNET_CONFIG_REMOTE_STDIO
+    RSTDIO_Print(ioLocal); /* dispatch incoming messages */
+    (void)CLS1_ReadAndParseWithCommandTable(radio_cmd_buf, sizeof(radio_cmd_buf), ioRemote, CmdParserTable);
 #endif
 #if PL_CONFIG_HAS_SHELL_QUEUE
 #if PL_SQUEUE_SINGLE_CHAR

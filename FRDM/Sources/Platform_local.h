@@ -13,7 +13,7 @@
 #define PL_CONFIG_NOF_KEYS      	(7)		// 7 Robot Shield
 #define PL_CONFIG_NOF_EINT      	(0)
 #define PL_CONFIG_NOF_BUZZ      	(0)
-#define PL_CONFIG_NOF_LCD       	(1)
+#define PL_CONFIG_NOF_LCD       	(0)
 #define PL_CONFIG_NOF_SNAKE     	(1)
 #define PL_CONFIG_NOF_SHELL     	(1)
 #define PL_CONFIG_NOF_BLUETOOTH 	(0)
