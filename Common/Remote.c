@@ -212,14 +212,14 @@ static int16_t scaleJoystickTo1K(int8_t val) {
   int tmp;
 
   if (val>0) {
-    tmp = ((val*10)/127)*100;
+    tmp = ((val*10)/127)*1000;
   } else {
-    tmp = ((val*10)/128)*100;
+    tmp = ((val*10)/128)*1000;
   }
-  if (tmp<-1000) {
-    tmp = -1000;
-  } else if (tmp>1000) {
-    tmp = 1000;
+  if (tmp<-10000) {
+    tmp = -10000;
+  } else if (tmp>10000) {
+    tmp = 10000;
   }
   return tmp;
 }

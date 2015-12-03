@@ -116,6 +116,7 @@
 #include "BitIoLdd20.h"
 #include "IRQ1.h"
 #include "ExtIntLdd2.h"
+#include "KIN1.h"
 
 #ifdef __cplusplus
 extern "C" {
