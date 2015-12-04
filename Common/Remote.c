@@ -35,6 +35,9 @@
 #if PL_CONFIG_HAS_SHELL
   #include "Shell.h"
 #endif
+#if PL_CONFIG_HAS_KEYS
+	#include "Keys.h"
+#endif
 
 static bool REMOTE_isOn = FALSE;
 static bool REMOTE_isVerbose = FALSE;
@@ -110,8 +113,25 @@ static void RemoteTask (void *pvParameters) {
 
         /* send periodically messages */
         APP_GetXY(&x, &y, &x8, &y8);
-        buf[0] = x8;
-        buf[1] = y8;
+        if(x8 > 100)
+        	buf[0] = 1;
+        else if(x8 < -100)
+        	buf[0] = 2;
+        else
+        	buf[0] = 0;
+        //buf[0] = x8;
+        if(normalSpeedPressed) {
+        	if(fastSpeedPressed) {
+        		buf[1] = 2;					// fast speed
+        	} else {
+        		buf[1] = 1;					// normal speed
+        	}
+        } else if (retourSpeedPressed) {
+        	buf[1] = 3;						// retour
+        } else {
+        	buf[1] = 0;						// stand
+        }
+        //buf[1] = y8;
         if (REMOTE_isVerbose) {
           uint8_t txtBuf[48];
 
@@ -119,12 +139,16 @@ static void RemoteTask (void *pvParameters) {
           UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), x8);
           UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*)" y: ");
           UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), y8);
-          UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*)" to addr 0x");
+          //UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*)" to addr 0x");
     #if RNWK_SHORT_ADDR_SIZE==1
-          UTIL1_strcatNum8Hex(txtBuf, sizeof(txtBuf), RNETA_GetDestAddr());
+          //UTIL1_strcatNum8Hex(txtBuf, sizeof(txtBuf), RNETA_GetDestAddr());
     #else
-          UTIL1_strcatNum16Hex(txtBuf, sizeof(txtBuf), RNETA_GetDestAddr());
+          //UTIL1_strcatNum16Hex(txtBuf, sizeof(txtBuf), RNETA_GetDestAddr());
     #endif
+          UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*)" 0/R/L: ");
+          UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), buf[0]);
+          UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*)" 0/N/F/R: ");
+          UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), buf[1]);
           UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*)"\r\n");
           SHELL_SendString(txtBuf);
         }
@@ -141,15 +165,60 @@ static void RemoteTask (void *pvParameters) {
 #endif
 
 #if PL_CONFIG_HAS_MOTOR
-static void REMOTE_HandleMotorMsg(int16_t speedVal, int16_t directionVal, int16_t z) {
+static void REMOTE_HandleMotorMsg(int16_t direction, int16_t speedMode, int16_t z) {
   #define SCALE_DOWN 30
   #define MIN_VALUE  250 /* values below this value are ignored */
   #define DRIVE_DOWN 1
 
+#define SCALE_FROM_PERCENT (16383/100)
+#define NORMAL_SPEED (20 * SCALE_FROM_PERCENT)
+#define FAST_SPEED (80 * SCALE_FROM_PERCENT)
+#define FAST_TURN (30 * SCALE_FROM_PERCENT)
+
   if (!REMOTE_isOn) {
     return;
   }
-  if (z<-900) { /* have a way to stop motor: turn FRDM USB port side up or down */
+
+  switch(direction) {
+  case 0:											// straight
+	  if(speedMode == 0){
+		  DRV_SetSpeed(0, 0);
+	  } else if (speedMode == 1) {
+		  DRV_SetSpeed(NORMAL_SPEED, NORMAL_SPEED);
+	  } else if (speedMode == 2) {
+		  DRV_SetSpeed(FAST_SPEED,FAST_SPEED );
+	  } else if (speedMode == 3){
+		  DRV_SetSpeed( -NORMAL_SPEED, -NORMAL_SPEED );
+	  }
+	  break;
+
+  case 1:											// right
+	  if(speedMode == 0){
+		  DRV_SetSpeed(NORMAL_SPEED, 0);
+	  } else if (speedMode == 1) {
+		  DRV_SetSpeed(FAST_SPEED, NORMAL_SPEED);
+	  } else if (speedMode == 2) {
+		  DRV_SetSpeed(FAST_SPEED,FAST_TURN );
+	  } else if (speedMode == 3){
+		  DRV_SetSpeed( -FAST_SPEED, -NORMAL_SPEED );
+	  }
+	  break;
+
+  case 2:											// left
+	  if(speedMode == 0){
+		  DRV_SetSpeed(0, NORMAL_SPEED);
+	  } else if (speedMode == 1) {
+		  DRV_SetSpeed(NORMAL_SPEED, FAST_SPEED);
+	  } else if (speedMode == 2) {
+		  DRV_SetSpeed(FAST_TURN,FAST_SPEED );
+	  } else if (speedMode == 3){
+		  DRV_SetSpeed( -NORMAL_SPEED, -FAST_SPEED );
+	  }
+	  break;
+
+  }
+  /*
+  if (z<-900) { /* have a way to stop motor: turn FRDM USB port side up or down
 #if PL_CONFIG_HAS_DRIVE
     DRV_SetSpeed(0, 0);
 #else
@@ -181,28 +250,29 @@ static void REMOTE_HandleMotorMsg(int16_t speedVal, int16_t directionVal, int16_
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), speedL);
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), speedR);
 #endif
-  } else if (speedVal>100 || speedVal<-100) { /* speed */
+  } else if (speedVal>100 || speedVal<-100) { //* speed
 #if PL_CONFIG_HAS_DRIVE
     DRV_SetSpeed(speedVal, speedVal);
 #else
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), -speedVal/SCALE_DOWN);
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), -speedVal/SCALE_DOWN);
 #endif
-  } else if (directionVal>100 || directionVal<-100) { /* direction */
+  } else if (directionVal>100 || directionVal<-100) { //* direction
 #if PL_CONFIG_HAS_DRIVE
     DRV_SetSpeed(directionVal/DRIVE_DOWN, -directionVal/DRIVE_DOWN);
 #else
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), -directionVal/SCALE_DOWN);
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), (directionVAl/SCALE_DOWN));
 #endif
-  } else { /* device flat on the table? */
+  } else { //* device flat on the table?
 #if PL_CONFIG_HAS_DRIVE
     DRV_SetSpeed(0, 0);
 #else
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), 0);
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 0);
 #endif
-  }
+
+  }  */
 }
 #endif
 
@@ -238,17 +308,17 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 #if PL_CONFIG_HAS_MOTOR
     case RAPP_MSG_TYPE_JOYSTICK_XY: /* values are -128...127 */
       {
-        int8_t x, y;
+        int8_t direction, speed;
         int16_t x1000, y1000;
 
         *handled = TRUE;
-        x = *data; /* get x data value */
-        y = *(data+1); /* get y data value */
+        direction = *data; /* get x data value */
+        speed = *(data+1); /* get y data value */
         if (REMOTE_isVerbose) {
-          UTIL1_strcpy(buf, sizeof(buf), (unsigned char*)"x/y: ");
-          UTIL1_strcatNum8s(buf, sizeof(buf), (int8_t)x);
+          UTIL1_strcpy(buf, sizeof(buf), (unsigned char*)"d/s: ");
+          UTIL1_strcatNum8s(buf, sizeof(buf), (int8_t)direction);
           UTIL1_chcat(buf, sizeof(buf), ',');
-          UTIL1_strcatNum8s(buf, sizeof(buf), (int8_t)y);
+          UTIL1_strcatNum8s(buf, sizeof(buf), (int8_t)speed);
           UTIL1_strcat(buf, sizeof(buf), (unsigned char*)"\r\n");
           SHELL_SendString(buf);
         }
@@ -260,17 +330,10 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         UTIL1_strcatNum8s(buf, sizeof(buf), scaleSpeedToPercent(y));
         SHELL_ParseCmd(buf);
   #endif
-        /* filter noise around zero */
-        if (x>-5 && x<5) {
-          x = 0;
-        }
-        if (y>-5 && y<5) {
-          y = 0;
-        }
-        x1000 = scaleJoystickTo1K(x);
-        y1000 = scaleJoystickTo1K(y);
+        //x1000 = scaleJoystickTo1K(x);
+        //y1000 = scaleJoystickTo1K(y);
         if (REMOTE_useJoystick) {
-          REMOTE_HandleMotorMsg(y1000, x1000, 0); /* first param is forward/backward speed, second param is direction */
+          REMOTE_HandleMotorMsg(direction, speed, 0); /* first param is forward/backward speed, second param is direction */
         }
       }
       break;

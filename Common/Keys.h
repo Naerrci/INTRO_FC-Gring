@@ -13,6 +13,10 @@
 #include "Platform.h"
 #include "Event.h"
 
+extern bool normalSpeedPressed;
+extern bool fastSpeedPressed;
+extern bool retourSpeedPressed;
+
 #define LONG_PRESSED_TIME	500
 #define DOUBLE_CLICK_TIME	200
 
