@@ -58,6 +58,7 @@
 #endif
 #if PL_CONFIG_HAS_REMOTE
   #include "Remote.h"
+  #include "RStdIO.h"
 #endif
 
 #if PL_CONFIG_IS_FRDM
@@ -200,9 +201,17 @@ void smFRDM(Event_t event) {
 #if PL_CONFIG_HAS_REMOTE
 		if (REMOTE_GetOnOff()) {
 			REMOTE_SetOnOff(FALSE);
+			//remote ROBO off
+			(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
+			"remote off\r\n",
+			sizeof("remote off\r\n")-1);
 		}
 		else {
 			REMOTE_SetOnOff(TRUE);
+			//remote ROBO on
+			(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
+			"remote on\r\n",
+			sizeof("remote on\r\n")-1);
 		}
 #endif
 	}
@@ -231,6 +240,12 @@ void smFRDM(Event_t event) {
 	if(event.eventName == evKeyFDoubleClick ) {
 #if PL_CONFIG_HAS_SNAKE
 		FRTOS1_vTaskResume(SnakeTaskHandle);
+#endif
+#if PL_CONFIG_HAS_REMOTE
+		// set Drive Mode ROBO to speed
+		(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
+		"drive mode speed\r\n",
+		sizeof("drive mode speed\r\n")-1);
 #endif
 		//CLS1_SendStr("F Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
