@@ -18,12 +18,15 @@
 #include "Drive.h"
 #include "Turn.h"
 #include "Shell.h"
+#include "Maze.h"
 #if PL_CONFIG_HAS_BUZZER
   #include "Buzzer.h"
 #endif
 #if PL_CONFIG_HAS_DRIVE
   #include "Drive.h"
 #endif
+
+
 
 #define LINE_DEBUG      1   /* careful: this will slow down the PID loop frequency! */
 #define LINE_FOLLOW_FW  1   /* test setting to do forward line following */
@@ -76,17 +79,25 @@ static bool FollowSegment(bool forward) {
 }
 
 static void StateMachine(void) {
+	static bool maze_finished = FALSE;
   switch (LF_currState) {
     case STATE_IDLE:
       break;
     case STATE_FOLLOW_SEGMENT:
       if (!FollowSegment(LINE_FOLLOW_FW)) {
-        LF_currState = STATE_STOP; /* stop if we do not have a line any more */
-        SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
+        LF_currState = STATE_TURN; /* stop if we do not have a line any more */
+        //SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
       }
       break;
     case STATE_TURN:
-      /*! \todo Handle maze turning? */
+    	MAZE_EvaluteTurn(&maze_finished);
+    	if(!maze_finished){
+    		//TURN_Turn(TURN_STEP_LINE_FW,NULL);
+    		LF_currState = STATE_FOLLOW_SEGMENT;
+    	}
+    	else
+    		LF_currState = STATE_STOP;
+
       break;
     case STATE_FINISHED:
       /*! \todo Handle maze finished? */

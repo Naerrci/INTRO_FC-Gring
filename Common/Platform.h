@@ -43,7 +43,8 @@
 #define PL_CONFIG_HAS_SEMAPHORE       	(1)
 #define PL_SQUEUE_SINGLE_CHAR        	(1)
 
-#define PL_CONFIG_HAS_CONFIG_NVM		PL_CONFIG_NOF_NVM > 0
+#define PL_CONFIG_HAS_CONFIG_NVM      	(1)
+#define PL_CONFIG_EST                 	(1)
 
 #define PL_CONFIG_HAS_MCP4728           (1 && defined(PL_BOARD_IS_ROBO))
 #define PL_CONFIG_HAS_QUADRATURE        (1 && defined(PL_BOARD_IS_ROBO))
@@ -57,11 +58,12 @@
 
 #define PL_CONFIG_HAS_TURN              (1 && PL_CONFIG_HAS_DRIVE)
 #define PL_CONFIG_HAS_LINE_FOLLOW       (1 && PL_CONFIG_HAS_REFLECTANCE)
-#define PL_CONFIG_APP_LINE_MAZE         (0)
+#define PL_CONFIG_HAS_LINE_MAZE         (1 && PL_CONFIG_HAS_LINE_FOLLOW)
 
 #define PL_CONFIG_HAS_RADIO             (1)
 #define PL_CONFIG_HAS_REMOTE            (1 && PL_CONFIG_HAS_RADIO)
 #define PL_CONFIG_CONTROL_SENDER        (1 && PL_CONFIG_HAS_JOYSTICK && defined(PL_BOARD_IS_FRDM))
+
 
 
 

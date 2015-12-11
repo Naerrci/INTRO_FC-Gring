@@ -29,6 +29,10 @@ typedef enum {
 REF_LineKind REF_GetLineKind(void);
 #endif
 
+#if PL_CONFIG_HAS_LINE_MAZE
+void REF_GetSensorValues(uint16_t *values, int nofValues);
+#endif
+
 #if PL_CONFIG_HAS_SHELL
   #include "CLS1.h"
   

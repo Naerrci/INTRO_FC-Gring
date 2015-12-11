@@ -107,7 +107,7 @@ static void StepsTurn(int32_t stepsL, int32_t stepsR, TURN_StopFct stopIt, int32
   }
 #if PL_CONFIG_HAS_SHELL
   if (timeout<=0) {
-    SHELL_SendString((unsigned char*)"StepsTurn Stopping Timeout.\r\n");
+    //SHELL_SendString((unsigned char*)"StepsTurn Stopping Timeout.\r\n");
   }
 #endif
   currLPos = Q4CLeft_GetPos();
