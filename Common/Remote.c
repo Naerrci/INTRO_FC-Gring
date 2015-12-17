@@ -38,6 +38,11 @@
 #if PL_CONFIG_HAS_KEYS
 	#include "Keys.h"
 #endif
+#if PL_CONFIG_HAS_LINE_MAZE
+	#include "Maze.h"
+	#include "LineFollow.h"
+#endif
+
 
 static bool REMOTE_isOn = FALSE;
 static bool REMOTE_isVerbose = FALSE;
@@ -131,6 +136,14 @@ static void RemoteTask (void *pvParameters) {
         } else {
         	buf[1] = 0;						// stand
         }
+        if(startLineFollow == 1) {
+        	buf[1] = 4; // left handed
+        	startLineFollow = 0;
+        }
+        if(startLineFollow == 2) {
+        	buf[1] = 5; // right handed
+        	startLineFollow = 0;
+        }
         //buf[1] = y8;
         if (REMOTE_isVerbose) {
           uint8_t txtBuf[48];
@@ -156,7 +169,7 @@ static void RemoteTask (void *pvParameters) {
         LED1_Neg();
       }
 #endif
-      FRTOS1_vTaskDelay(200/portTICK_PERIOD_MS);
+      FRTOS1_vTaskDelay(20/portTICK_PERIOD_MS);
     } else {
       FRTOS1_vTaskDelay(1000/portTICK_PERIOD_MS);
     }
@@ -176,7 +189,24 @@ static void REMOTE_HandleMotorMsg(int16_t direction, int16_t speedMode, int16_t 
 #define FAST_TURN (30 * SCALE_FROM_PERCENT)
 
   if (!REMOTE_isOn) {
+	  LED1_Off();
     return;
+  }
+
+  LED1_On();
+
+  if(speedMode == 4) {
+	  // left handed
+	  LED2_On();
+	  MAZE_SetTurnHandleLeft(TRUE);
+	  LF_StartFollowing();
+  }
+
+  if(speedMode == 5) {
+	  // right handed
+	  LED2_On();
+	  MAZE_SetTurnHandleLeft(FALSE);
+	  LF_StartFollowing();
   }
 
   switch(direction) {
@@ -422,6 +452,7 @@ uint8_t REMOTE_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_
     *handled = TRUE;
   } else if (UTIL1_strcmp((char*)cmd, (char*)"remote on")==0) {
     REMOTE_isOn = TRUE;
+    LED1_On();
     *handled = TRUE;
   } else if (UTIL1_strcmp((char*)cmd, (char*)"remote off")==0) {
 #if PL_CONFIG_HAS_MOTOR
@@ -429,6 +460,7 @@ uint8_t REMOTE_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_
     MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 0);
 #endif
     REMOTE_isOn = FALSE;
+    LED1_Off();
     *handled = TRUE;
   } else if (UTIL1_strcmp((char*)cmd, (char*)"remote verbose on")==0) {
     REMOTE_isVerbose = TRUE;

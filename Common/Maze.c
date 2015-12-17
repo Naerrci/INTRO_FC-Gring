@@ -244,7 +244,9 @@ uint8_t MAZE_EvaluteTurn(bool *finished) {
 			SHELL_SendString((unsigned char*)"MAZE: solved!\r\n");
 		} else {
 			*finished = TRUE;
+			TURN_Turn(TURN_LEFT180,NULL);
 			SHELL_SendString((unsigned char*)"MAZE: finished!\r\n");
+			MAZE_ClearSolution();
 		}
 		return ERR_OK;
 	} else if (turn==TURN_STRAIGHT) {

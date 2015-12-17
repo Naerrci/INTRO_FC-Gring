@@ -34,6 +34,7 @@
 bool normalSpeedPressed = 0;
 bool fastSpeedPressed = 0;
 bool retourSpeedPressed = 0;
+int startLineFollow = 0;
 
 void KEY_Scan(void) {
 	static short oldMask = 0;

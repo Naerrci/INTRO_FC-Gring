@@ -43,7 +43,7 @@
 #define PL_CONFIG_HAS_SEMAPHORE       	(1)
 #define PL_SQUEUE_SINGLE_CHAR        	(1)
 
-#define PL_CONFIG_HAS_CONFIG_NVM      	(1)
+#define PL_CONFIG_HAS_CONFIG_NVM      	(1 && PL_CONFIG_NOF_NVM > 0)
 #define PL_CONFIG_EST                 	(1)
 
 #define PL_CONFIG_HAS_MCP4728           (1 && defined(PL_BOARD_IS_ROBO))

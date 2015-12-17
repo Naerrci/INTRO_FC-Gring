@@ -121,6 +121,25 @@ void smFRDM(Event_t event) {
 
 	if(event.eventName == evKeyBDoubleClick ) {
 		//CLS1_SendStr("B Double Click\r\n", CLS1_GetStdio()->stdOut);
+#if PL_CONFIG_HAS_REMOTE
+		if (REMOTE_GetOnOff()) {
+			REMOTE_SetOnOff(FALSE);
+			//remote ROBO off
+			(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
+			"remote off\r\n",
+			sizeof("remote off\r\n")-1);
+		}
+		else {
+			REMOTE_SetOnOff(TRUE);
+			//remote ROBO on
+			(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
+			"remote on\r\n",
+			sizeof("remote on\r\n")-1);
+		}
+		(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
+		"drive mode speed\r\n",
+		sizeof("drive mode speed\r\n")-1);
+#endif
 	}
 
 	// Key C
@@ -178,6 +197,7 @@ void smFRDM(Event_t event) {
 	// Key E
 	if(event.eventName == evKeyEPressed ) {
 		//CLS1_SendStr("E Pressed\r\n", CLS1_GetStdio()->stdOut);
+		startLineFollow = 2; // right handed
 	}
 
 	if(event.eventName == evKeyEReleased ) {
@@ -198,27 +218,12 @@ void smFRDM(Event_t event) {
 	if(event.eventName == evKeyEDoubleClick ) {
 		//CLS1_SendStr("E Double Click\r\n", CLS1_GetStdio()->stdOut);
 		//SHELL_SendString("Test Queue: Hallo FC-Gring from FRDM\r\n");
-#if PL_CONFIG_HAS_REMOTE
-		if (REMOTE_GetOnOff()) {
-			REMOTE_SetOnOff(FALSE);
-			//remote ROBO off
-			(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
-			"remote off\r\n",
-			sizeof("remote off\r\n")-1);
-		}
-		else {
-			REMOTE_SetOnOff(TRUE);
-			//remote ROBO on
-			(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
-			"remote on\r\n",
-			sizeof("remote on\r\n")-1);
-		}
-#endif
 	}
 
 	// Key F
 	if(event.eventName == evKeyFPressed ) {
 		//CLS1_SendStr("F Pressed\r\n", CLS1_GetStdio()->stdOut);
+		startLineFollow = 1; // left handed
 	}
 
 	if(event.eventName == evKeyFReleased ) {
@@ -243,9 +248,6 @@ void smFRDM(Event_t event) {
 #endif
 #if PL_CONFIG_HAS_REMOTE
 		// set Drive Mode ROBO to speed
-		(void)RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN,
-		"drive mode speed\r\n",
-		sizeof("drive mode speed\r\n")-1);
 #endif
 		//CLS1_SendStr("F Double Click\r\n", CLS1_GetStdio()->stdOut);
 	}
@@ -317,11 +319,11 @@ void smROBO(Event_t event){
 	//	MOT_ChangeSpeedPercent(&motorL, (MOT_SpeedPercent) 50);
 		if(!start) {
 			LF_StartFollowing();
-			start = FALSE;
+			start = TRUE;
 		}
 		else {
 			LF_StopFollowing();
-			start = TRUE;
+			start = FALSE;
 		}
 	}
 

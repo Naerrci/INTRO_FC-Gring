@@ -16,6 +16,7 @@
 extern bool normalSpeedPressed;
 extern bool fastSpeedPressed;
 extern bool retourSpeedPressed;
+extern int startLineFollow;
 
 #define LONG_PRESSED_TIME	500
 #define DOUBLE_CLICK_TIME	200
