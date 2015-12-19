@@ -15,7 +15,7 @@
 #include "Shell.h"
 #include "Reflectance.h"
 
-#define MAZE_MIN_LINE_VAL      0x30   /* minimum value indicating a line */
+#define MAZE_MIN_LINE_VAL      0x20   /* minimum value indicating a line */
 static uint16_t SensorHistory[REF_NOF_SENSORS]; /* value of history while moving forward */
 static bool leftHanded = FALSE;
 

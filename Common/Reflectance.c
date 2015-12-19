@@ -32,7 +32,7 @@
 
 #define REF_NOF_SENSORS       6 /* number of sensors */
 #define REF_SENSOR1_IS_LEFT   1 /* sensor number one is on the left side */
-#define REF_MIN_NOISE_VAL     0x10   /* values below this are not added to the weighted sum */
+#define REF_MIN_NOISE_VAL     0x05//0x10   /* values below this are not added to the weighted sum */
 #define REF_USE_WHITE_LINE    0  /* if set to 1, then the robot is using a white (on black) line, otherwise a black (on white) line */
 
 #define REF_START_STOP_CALIB      1 /* start/stop calibration commands */
@@ -168,7 +168,7 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
         cnt++;
       }
     }
-    if (timerVal > 0x4000){	//9375) {/*5ms*/
+    if (timerVal > 0x3000){	//9375) {/*5ms*/
     	for(i=0;i<REF_NOF_SENSORS;i++) {
 		  if (raw[i]==MAX_SENSOR_VALUE) { /* not measured yet? */
 			raw[i] = timerVal;
@@ -274,7 +274,7 @@ uint16_t REF_GetLineValue(void) {
 static REF_LineKind ReadLineKind(SensorTimeType val[REF_NOF_SENSORS]) {
   uint32_t sum, sumLeft, sumRight, outerLeft, outerRight;
   int i;
-  #define REF_MIN_LINE_VAL      0x30   /* minimum value indicating a line */
+  #define REF_MIN_LINE_VAL      0x20   /* minimum value indicating a line */
 
   for(i=0;i<REF_NOF_SENSORS;i++) {
     if (val[i]<REF_MIN_LINE_VAL) { /* smaller value? White seen! */

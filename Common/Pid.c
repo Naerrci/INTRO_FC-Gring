@@ -392,8 +392,8 @@ void PID_Init(void) {
   speedRightConfig.integral = 0;
   speedRightConfig.maxSpeedPercent = speedLeftConfig.maxSpeedPercent;
 #endif
-  lineFwConfig.pFactor100 = 2500;
-  lineFwConfig.iFactor100 = 25;
+  lineFwConfig.pFactor100 = 1000;
+  lineFwConfig.iFactor100 = 8;
   lineFwConfig.dFactor100 = 1000;
   lineFwConfig.iAntiWindup = 100000;
   lineFwConfig.maxSpeedPercent = 60;
